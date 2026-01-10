@@ -1,0 +1,22 @@
+# Angular / Frontend
+**/node_modules/
+**/dist/
+**/.angular/
+**/.vscode/
+**/.idea/
+**/*.log
+**/.DS_Store
+
+# Java / Spring Boot / Backend
+**/target/
+**/*.class
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+**/.settings/
+**/.classpath
+**/.project
+**/bin/
+
+# OS generated files
+Thumbs.db

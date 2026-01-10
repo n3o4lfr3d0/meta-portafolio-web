@@ -1,0 +1,69 @@
+@if (profile(); as p) {
+<div class="max-w-xl animate-fade-in">
+  <!-- Logo Section -->
+  <div class="mb-8">
+    <app-logo size="lg"></app-logo>
+  </div>
+
+  <div class="flex gap-4 mb-4">
+    <img
+      class="rounded-full shadow-lg size-24 object-cover object-top border-2 border-white/10"
+      src="/me.png"
+      [alt]="p.name"
+    />
+    <a
+      href="https://linkedin.com/in/alfredosotonolazco"
+      target="_blank"
+      rel="noopener"
+      class="flex items-center transition md:justify-center md:hover:scale-105"
+    >
+      <div class="flex items-center ">
+        <span class="relative inline-flex overflow-hidden rounded-full p-[1px]">
+          <span
+            class="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#51E4B8_0%,#21554E_50%,#51E4B8_100%)]"
+          ></span>
+          <div
+            class="inline-flex items-center justify-center w-full px-3 py-1 text-sm text-green-800 bg-green-100 rounded-full cursor-pointer dark:bg-gray-800 dark:text-white/80 backdrop-blur-3xl whitespace-nowrap"
+          >
+            Disponible para trabajar
+          </div>
+        </span>
+      </div>
+    </a>
+  </div>
+
+  <h1
+    class="text-4xl font-bold tracking-tight text-white sm:text-5xl"
+  >
+    Hola, soy {{ p.name }}
+  </h1>
+  
+  <p
+    class="mt-6 text-xl text-gray-300 [&>strong]:text-yellow-400 [&>strong]:font-semibold"
+  >
+    <strong>{{ p.experienceYears }}</strong> de experiencia. Especializado en el ecosistema <strong>{{ p.specialization }}</strong>.
+  </p>
+  
+  <nav class="flex gap-4 mt-8 flex-wrap">
+    @for (link of p.socialLinks; track link.name) {
+      <a [href]="link.url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-4 py-1 text-white transition bg-gray-800 border border-gray-600 rounded-full focus-visible:ring-yellow-500/80 text-md hover:bg-gray-900 hover:border-gray-700 group max-w-fit hover:text-yellow-200 focus:outline-none focus-visible:outline-none focus-visible:ring focus-visible:ring-white focus-visible:ring-offset-2 active:bg-black">
+        @if (link.icon === 'linkedin') {
+            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+        } @else {
+            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        }
+        {{ link.name }}
+      </a>
+    }
+  </nav>
+</div>
+} @else {
+  <div class="max-w-xl animate-pulse">
+    <div class="flex gap-4 mb-4">
+      <div class="rounded-full bg-gray-700 size-24"></div>
+    </div>
+    <div class="h-10 bg-gray-700 rounded w-3/4 mb-4"></div>
+    <div class="h-4 bg-gray-700 rounded w-full mb-2"></div>
+    <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+  </div>
+}
