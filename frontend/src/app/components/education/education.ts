@@ -8,6 +8,6 @@ import { EducationService } from '../../services/education.service';
   templateUrl: './education.html',
 })
 export class EducationComponent {
-  private educationService = inject(EducationService);
+  private readonly educationService = inject(EducationService);
   education = toSignal(this.educationService.getEducation());
 }

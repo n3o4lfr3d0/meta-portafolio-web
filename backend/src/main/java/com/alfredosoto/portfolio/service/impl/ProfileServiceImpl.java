@@ -4,6 +4,8 @@ import com.alfredosoto.portfolio.dto.ProfileDTO;
 import com.alfredosoto.portfolio.entity.ProfileEntity;
 import com.alfredosoto.portfolio.repository.ProfileRepository;
 import com.alfredosoto.portfolio.service.ProfileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -12,6 +14,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProfileServiceImpl.class);
 
     private final ProfileRepository profileRepository;
 
@@ -27,8 +31,8 @@ public class ProfileServiceImpl implements ProfileService {
                 return mapToDTO(entity);
             }
         } catch (Exception e) {
-            // Log error (System.err.println for simplicity now)
-            System.err.println("Error fetching profile from DynamoDB: " + e.getMessage());
+            // Log error
+            logger.error("Error fetching profile from DynamoDB: {}", e.getMessage(), e);
         }
 
         // Fallback to mock data if DB is empty or fails

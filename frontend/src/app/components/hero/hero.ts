@@ -7,10 +7,9 @@ import { LogoComponent } from '../ui/logo/logo.component';
   selector: 'app-hero',
   standalone: true,
   imports: [LogoComponent],
-  templateUrl: './hero.html',
-  styleUrl: './hero.css'
+  templateUrl: './hero.html'
 })
 export class HeroComponent {
-  private profileService = inject(ProfileService);
+  private readonly profileService = inject(ProfileService);
   profile = toSignal(this.profileService.getProfile());
 }

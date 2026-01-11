@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { environment } from '../../environments/environment';
 import { Education } from '../models/education.model';
 import { EducationService } from './education.service';
 
@@ -38,7 +39,7 @@ describe('EducationService', () => {
       expect(education).toEqual(dummyEducation);
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/education');
+    const req = httpMock.expectOne(`${environment.apiUrl}/education`);
     expect(req.request.method).toBe('GET');
     req.flush(dummyEducation);
   });

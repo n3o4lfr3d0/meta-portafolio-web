@@ -4,7 +4,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ProfileService } from './services/profile.service';
 import { ExperienceService } from './services/experience.service';
-import { ProjectService } from './services/project.service';
 import { SkillService } from './services/skill.service';
 import { of } from 'rxjs';
 
@@ -25,9 +24,6 @@ describe('App', () => {
     const experienceServiceMock = {
       getExperience: () => of([])
     };
-    const projectServiceMock = {
-      getProjects: () => of([])
-    };
     const skillServiceMock = {
       getSkills: () => of([])
     };
@@ -39,7 +35,6 @@ describe('App', () => {
         provideHttpClientTesting(),
         { provide: ProfileService, useValue: profileServiceMock },
         { provide: ExperienceService, useValue: experienceServiceMock },
-        { provide: ProjectService, useValue: projectServiceMock },
         { provide: SkillService, useValue: skillServiceMock }
       ]
     }).compileComponents();

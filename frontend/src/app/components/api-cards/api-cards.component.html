@@ -1,0 +1,62 @@
+<div id="api-cards-section" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+  <!-- Loading Skeleton -->
+  @if (isLoading()) {
+    @for (i of [1,2,3]; track i) {
+      <div class="card bg-base-100 shadow-xl border border-base-300 animate-pulse">
+        <div class="card-body items-center text-center">
+          <div class="w-16 h-16 rounded-full bg-base-300 mb-4"></div>
+          <div class="h-6 bg-base-300 rounded w-1/2 mb-4"></div>
+          <div class="h-20 bg-base-300 rounded w-full"></div>
+        </div>
+      </div>
+    }
+  } @else {
+
+    <!-- Card: Tip del Día -->
+    <div id="card-tip" class="card bg-base-100 shadow-xl border border-primary/20 hover:border-primary transition-all duration-300 group hover:shadow-2xl">
+      <div class="card-body items-center text-center p-6">
+        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+          <span class="text-3xl">💡</span>
+        </div>
+        <h2 class="card-title text-primary mb-3">Tip del Día</h2>
+        <div class="w-full flex items-center justify-center min-h-[80px]">
+            <p class="italic text-base-content/80 text-lg leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
+                "{{ content()?.tip }}"
+            </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Inspiración -->
+    <div id="card-quote" class="card bg-base-100 shadow-xl border border-secondary/20 hover:border-secondary transition-all duration-300 group hover:shadow-2xl">
+      <div class="card-body items-center text-center p-6">
+        <div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+          <span class="text-3xl">📜</span>
+        </div>
+        <h2 class="card-title text-secondary mb-3">Frase del día</h2>
+        <div class="w-full flex flex-col items-center justify-center min-h-[80px]">
+          <p class="italic text-base-content/80 text-lg leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
+            "{{ content()?.quote }}"
+          </p>
+          <p class="text-sm font-bold mt-3 text-secondary/80">- {{ content()?.quoteAuthor }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Humor Geek -->
+    <div id="card-joke" class="card bg-base-100 shadow-xl border border-accent/20 hover:border-accent transition-all duration-300 group hover:shadow-2xl">
+      <div class="card-body items-center text-center p-6">
+        <div class="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+          <span class="text-3xl">😂</span>
+        </div>
+        <h2 class="card-title text-accent mb-3">Chiste del día</h2>
+        <div class="w-full flex items-center justify-center min-h-[80px]">
+          <p class="italic text-base-content/80 text-lg leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
+            {{ content()?.joke }}
+          </p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

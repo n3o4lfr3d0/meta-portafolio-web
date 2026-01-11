@@ -2,10 +2,23 @@
 **/node_modules/
 **/dist/
 **/.angular/
+**/coverage/
+**/tmp/
+**/out-tsc/
+**/bazel-out/
+**/npm-debug.log
+**/yarn-error.log
+**/.sass-cache/
+**/connect.lock
+**/testem.log
+**/typings/
+**/__screenshots__/
 **/.vscode/
 **/.idea/
 **/*.log
 **/.DS_Store
+**/*.sublime-workspace
+**/*.sublime-project
 
 # Java / Spring Boot / Backend
 **/target/
@@ -17,11 +30,23 @@
 **/.classpath
 **/.project
 **/bin/
+**/*.iml
 
 # OS generated files
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
 
-#CV
+# CV Extraction & Temp Files
 **/temp_cv_extracted/
-**/temp_cv.zip/
+**/temp_cv.zip
+**/temp_cv_zip/
 *.txt
+*.pdf
+*.doc
+*.docx

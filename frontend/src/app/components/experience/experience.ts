@@ -8,6 +8,6 @@ import { ExperienceService } from '../../services/experience.service';
   templateUrl: './experience.html',
 })
 export class ExperienceComponent {
-  private experienceService = inject(ExperienceService);
+  private readonly experienceService = inject(ExperienceService);
   experience = toSignal(this.experienceService.getExperience());
 }

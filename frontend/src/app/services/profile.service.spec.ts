@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 import { ProfileService } from './profile.service';
 import { Profile } from '../models/profile.model';
+import { environment } from '../../environments/environment';
 
 describe('ProfileService', () => {
   let service: ProfileService;
@@ -44,7 +45,7 @@ describe('ProfileService', () => {
       expect(profile).toEqual(dummyProfile);
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/profile');
+    const req = httpMock.expectOne(`${environment.apiUrl}/profile`);
     expect(req.request.method).toBe('GET');
     req.flush(dummyProfile);
   });

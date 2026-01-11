@@ -22,6 +22,10 @@ public class SkillRepository {
         table.putItem(skill);
     }
 
+    public void delete(SkillEntity skill) {
+        table.deleteItem(skill);
+    }
+
     public List<SkillEntity> findAll() {
         return table.scan().items().stream().collect(Collectors.toList());
     }

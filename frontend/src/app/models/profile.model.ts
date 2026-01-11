@@ -1,7 +1,7 @@
 export interface SocialLink {
-  name: String;
-  url: String;
-  icon: String;
+  name: string;
+  url: string;
+  icon: string;
 }
 
 export interface Profile {

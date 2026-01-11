@@ -1,34 +1,52 @@
 <section class="py-20 px-4 md:px-8">
-  <div class="max-w-6xl mx-auto">
-    <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">
-      Habilidades Técnicas
-    </h2>
+  <div class="max-w-6xl mx-auto space-y-20">
 
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      @for (skill of skills(); track skill.name) {
-        <div class="group p-6 rounded-xl bg-card-custom border border-card-custom hover:border-cyan-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/10">
-          <div class="flex flex-col items-center text-center gap-4">
-            <!-- Icon Placeholder (using text for now, could be SVG or FontAwesome) -->
-            <div class="w-16 h-16 rounded-full bg-black/10 dark:bg-neutral-800 flex items-center justify-center text-2xl group-hover:bg-cyan-500/10 group-hover:text-cyan-400 transition-colors text-default">
-              {{ skill.name.charAt(0) }}
-            </div>
-            
-            <div>
-              <h3 class="font-bold text-lg text-default mb-1">{{ skill.name }}</h3>
-              <span class="text-xs px-2 py-1 rounded-full bg-black/5 dark:bg-neutral-800 text-muted-custom border border-black/10 dark:border-neutral-700">
-                {{ skill.category }}
-              </span>
-            </div>
+    <!-- Technical Skills -->
+    <div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">
+        Habilidades Técnicas
+      </h2>
 
-            <!-- Progress Bar -->
-            <div class="w-full h-1.5 bg-black/10 dark:bg-neutral-800 rounded-full overflow-hidden mt-2">
-              <div class="h-full bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full"
-                   [style.width.%]="skill.level">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        @for (skill of technicalSkills(); track skill.name) {
+          <div class="group p-6 rounded-xl bg-card-custom border border-card-custom hover:border-cyan-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/10 flex flex-col items-center gap-4">
+              <!-- Icon -->
+              <div class="w-16 h-16 flex items-center justify-center p-2 rounded-lg bg-black/5 dark:bg-white/5 group-hover:bg-cyan-500/10 transition-colors">
+                <img [src]="skill.icon" [alt]="skill.name" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110" />
               </div>
-            </div>
+
+              <div class="text-center">
+                <h3 class="font-bold text-lg text-default">{{ skill.name }}</h3>
+                <span class="text-xs px-2 py-1 rounded-full bg-black/5 dark:bg-neutral-800 text-muted-custom border border-black/10 dark:border-neutral-700 mt-2 inline-block">
+                  {{ skill.category }}
+                </span>
+              </div>
           </div>
-        </div>
-      }
+        }
+      </div>
     </div>
+
+    <!-- Soft Skills -->
+    <div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-600">
+        Habilidades Blandas
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (skill of softSkills(); track skill.name) {
+          <div class="group p-6 rounded-xl bg-card-custom border border-card-custom hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/10 flex items-center gap-4">
+              <!-- Icon -->
+              <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center p-2 rounded-full bg-emerald-500/10 text-emerald-500">
+                 <img [src]="skill.icon" [alt]="skill.name" class="w-full h-full object-contain" />
+              </div>
+
+              <div>
+                <h3 class="font-bold text-lg text-default">{{ skill.name }}</h3>
+              </div>
+          </div>
+        }
+      </div>
+    </div>
+
   </div>
 </section>

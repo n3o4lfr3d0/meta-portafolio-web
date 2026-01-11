@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 import { ExperienceService } from './experience.service';
 import { Experience } from '../models/experience.model';
+import { environment } from '../../environments/environment';
 
 describe('ExperienceService', () => {
   let service: ExperienceService;
@@ -34,7 +35,7 @@ describe('ExperienceService', () => {
       expect(experience).toEqual(dummyExperience);
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/experience');
+    const req = httpMock.expectOne(`${environment.apiUrl}/experience`);
     expect(req.request.method).toBe('GET');
     req.flush(dummyExperience);
   });

@@ -1,14 +1,15 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Skill } from '../models/skill.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SkillService {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/skills';
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/skills`;
 
   getSkills(): Observable<Skill[]> {
     return this.http.get<Skill[]>(this.apiUrl);

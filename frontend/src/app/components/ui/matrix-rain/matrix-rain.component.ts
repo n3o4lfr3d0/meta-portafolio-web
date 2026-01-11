@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, inject } from '@angular/core';
 
 @Component({
   selector: 'app-matrix-rain',
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 })
 export class MatrixRainComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
-  private ngZone = inject(NgZone);
+  private readonly ngZone = inject(NgZone);
   private animationId: number | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
@@ -37,9 +37,9 @@ export class MatrixRainComponent implements AfterViewInit, OnDestroy {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
-    
+
     resizeCanvas();
-    
+
     // Re-ajustar si cambia el tamaño de la ventana
     this.resizeObserver = new ResizeObserver(() => resizeCanvas());
     this.resizeObserver.observe(document.body);

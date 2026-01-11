@@ -1,9 +1,9 @@
 package com.alfredosoto.portfolio.config;
 
 import com.alfredosoto.portfolio.entity.EducationEntity;
+import com.alfredosoto.portfolio.entity.DailyContentEntity;
 import com.alfredosoto.portfolio.entity.ExperienceEntity;
 import com.alfredosoto.portfolio.entity.ProfileEntity;
-import com.alfredosoto.portfolio.entity.ProjectEntity;
 import com.alfredosoto.portfolio.entity.SkillEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +30,12 @@ public class DynamoDbSchemaInitializer {
             logger.info("Verificando tablas de DynamoDB...");
 
             createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Profile", ProfileEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Projects", ProjectEntity.class);
             createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Skills", SkillEntity.class);
             createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Experience", ExperienceEntity.class);
             createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Education", EducationEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_DailyContent", DailyContentEntity.class);
             
-            logger.info("Verificación de tablas completada.");
+            logger.info("Verificación de esquema completada.");
         };
     }
 

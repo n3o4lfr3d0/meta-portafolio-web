@@ -4,6 +4,8 @@ import com.alfredosoto.portfolio.dto.EducationDTO;
 import com.alfredosoto.portfolio.entity.EducationEntity;
 import com.alfredosoto.portfolio.repository.EducationRepository;
 import com.alfredosoto.portfolio.service.EducationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class EducationServiceImpl implements EducationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EducationServiceImpl.class);
 
     private final EducationRepository educationRepository;
 
@@ -34,7 +38,7 @@ public class EducationServiceImpl implements EducationService {
                         .collect(Collectors.toList());
             }
         } catch (Exception e) {
-            System.err.println("Error fetching education from DynamoDB: " + e.getMessage());
+            logger.error("Error fetching education from DynamoDB: {}", e.getMessage(), e);
         }
         return List.of();
     }
