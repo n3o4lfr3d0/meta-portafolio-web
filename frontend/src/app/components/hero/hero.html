@@ -33,20 +33,20 @@
   </div>
 
   <h1
-    class="text-4xl font-bold tracking-tight text-white sm:text-5xl"
+    class="text-4xl font-bold tracking-tight text-default sm:text-5xl"
   >
     Hola, soy {{ p.name }}
   </h1>
-  
+
   <p
-    class="mt-6 text-xl text-gray-300 [&>strong]:text-yellow-400 [&>strong]:font-semibold"
+    class="mt-6 text-xl text-muted-custom [&>strong]:text-yellow-600 dark:[&>strong]:text-yellow-400 [&>strong]:font-semibold"
   >
-    <strong>{{ p.experienceYears }}</strong> de experiencia. Especializado en el ecosistema <strong>{{ p.specialization }}</strong>.
+    {{ p.summary }}
   </p>
-  
+
   <nav class="flex gap-4 mt-8 flex-wrap">
     @for (link of p.socialLinks; track link.name) {
-      <a [href]="link.url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-4 py-1 text-white transition bg-gray-800 border border-gray-600 rounded-full focus-visible:ring-yellow-500/80 text-md hover:bg-gray-900 hover:border-gray-700 group max-w-fit hover:text-yellow-200 focus:outline-none focus-visible:outline-none focus-visible:ring focus-visible:ring-white focus-visible:ring-offset-2 active:bg-black">
+      <a [href]="link.url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-4 py-1 text-default transition bg-card-custom border border-card-custom rounded-full focus-visible:ring-yellow-500/80 text-md hover:bg-gray-900 hover:border-gray-700 group max-w-fit hover:text-yellow-200 focus:outline-none focus-visible:outline-none focus-visible:ring focus-visible:ring-white focus-visible:ring-offset-2 active:bg-black">
         @if (link.icon === 'linkedin') {
             <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
         } @else {

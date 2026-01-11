@@ -1,16 +1,37 @@
 package com.alfredosoto.portfolio.service.impl;
 
 import com.alfredosoto.portfolio.dto.ProjectDTO;
+import com.alfredosoto.portfolio.entity.ProjectEntity;
+import com.alfredosoto.portfolio.repository.ProjectRepository;
 import com.alfredosoto.portfolio.service.ProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
+    private final ProjectRepository projectRepository;
+
+    public ProjectServiceImpl(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
+
     @Override
     public List<ProjectDTO> getProjects() {
+        try {
+            List<ProjectEntity> entities = projectRepository.findAll();
+            if (!entities.isEmpty()) {
+                return entities.stream()
+                        .map(this::mapToDTO)
+                        .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            System.err.println("Error fetching projects from DynamoDB: " + e.getMessage());
+        }
+
+        // Fallback mock data
         return List.of(
             new ProjectDTO(
                 "Sistema de Gestión Aduanera",
@@ -36,6 +57,17 @@ public class ProjectServiceImpl implements ProjectService {
                 "https://github.com/alfredosoto/portfolio",
                 "https://alfredosoto.dev"
             )
+        );
+    }
+
+    private ProjectDTO mapToDTO(ProjectEntity entity) {
+        return new ProjectDTO(
+            entity.getTitle(),
+            entity.getDescription(),
+            entity.getTags(),
+            entity.getImage(),
+            entity.getGithubLink(),
+            entity.getDemoLink()
         );
     }
 }

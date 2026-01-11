@@ -7,8 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
-<body class="bg-neutral-950 text-white antialiased selection:bg-yellow-500 selection:text-black">
-  <div class="absolute top-0 z-[-2] h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+<body class="antialiased selection:bg-yellow-500 selection:text-black">
+  <!-- Radial Gradient Background (Optional, can be hidden in light mode via CSS if needed) -->
+  <div class="fixed top-0 left-0 z-[-2] h-screen w-screen bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] pointer-events-none opacity-50 dark:opacity-100"></div>
   <app-root></app-root>
 </body>
 </html>

@@ -1,16 +1,37 @@
 package com.alfredosoto.portfolio.service.impl;
 
 import com.alfredosoto.portfolio.dto.SkillDTO;
+import com.alfredosoto.portfolio.entity.SkillEntity;
+import com.alfredosoto.portfolio.repository.SkillRepository;
 import com.alfredosoto.portfolio.service.SkillService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SkillServiceImpl implements SkillService {
 
+    private final SkillRepository skillRepository;
+
+    public SkillServiceImpl(SkillRepository skillRepository) {
+        this.skillRepository = skillRepository;
+    }
+
     @Override
     public List<SkillDTO> getAllSkills() {
+        try {
+            List<SkillEntity> entities = skillRepository.findAll();
+            if (!entities.isEmpty()) {
+                return entities.stream()
+                        .map(this::mapToDTO)
+                        .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            System.err.println("Error fetching skills from DynamoDB: " + e.getMessage());
+        }
+
+        // Fallback mock data
         return List.of(
             // Frontend
             new SkillDTO("Angular", "Frontend", 90, "angular"),
@@ -28,6 +49,15 @@ public class SkillServiceImpl implements SkillService {
             new SkillDTO("Git", "Tools", 90, "git"),
             new SkillDTO("Docker", "Tools", 75, "docker"),
             new SkillDTO("Jenkins", "Tools", 70, "jenkins")
+        );
+    }
+
+    private SkillDTO mapToDTO(SkillEntity entity) {
+        return new SkillDTO(
+            entity.getName(),
+            entity.getCategory(),
+            entity.getLevel(),
+            entity.getIcon()
         );
     }
 }

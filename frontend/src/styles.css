@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Default (Matrix/Dark) */
+  --bg-color: #0a0a0a;
+  --text-color: #ffffff;
+  --text-muted: #d4d4d4;
+  --card-bg: #171717;
+  --card-border: #262626;
+}
+
+body.theme-light {
+  /* Light Mode (Real World) */
+  --bg-color: #f5f5f5;
+  --text-color: #171717;
+  --text-muted: #525252;
+  --card-bg: #ffffff;
+  --card-border: #e5e5e5;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Utility classes that use our variables */
+.text-default { color: var(--text-color); }
+.text-muted-custom { color: var(--text-muted); }
+.bg-card-custom { background-color: var(--card-bg); }
+.border-card-custom { border-color: var(--card-border); }
