@@ -11,7 +11,7 @@ export class ExperienceService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/experience`;
 
-  getExperience(): Observable<Experience[]> {
-    return this.http.get<Experience[]>(this.apiUrl);
+  getExperience(lang: string = 'es'): Observable<Experience[]> {
+    return this.http.get<Experience[]>(`${this.apiUrl}?lang=${lang}`);
   }
 }

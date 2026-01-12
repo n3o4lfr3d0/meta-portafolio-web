@@ -24,8 +24,13 @@ public class EducationServiceImpl implements EducationService {
 
     @Override
     public List<EducationDTO> getEducation() {
+        return getEducation("es");
+    }
+
+    @Override
+    public List<EducationDTO> getEducation(String lang) {
         try {
-            List<EducationEntity> entities = educationRepository.findAll();
+            List<EducationEntity> entities = educationRepository.findAll(lang);
             if (!entities.isEmpty()) {
                 return entities.stream()
                         .sorted((e1, e2) -> {

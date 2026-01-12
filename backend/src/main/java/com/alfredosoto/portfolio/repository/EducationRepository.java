@@ -26,7 +26,19 @@ public class EducationRepository {
         table.deleteItem(education);
     }
 
+    public void deleteAll() {
+        for (EducationEntity item : table.scan().items()) {
+            table.deleteItem(item);
+        }
+    }
+
     public List<EducationEntity> findAll() {
-        return table.scan().items().stream().collect(Collectors.toList());
+        return findAll("es");
+    }
+
+    public List<EducationEntity> findAll(String lang) {
+        return table.scan().items().stream()
+                .filter(e -> lang.equals(e.getLanguage()))
+                .collect(Collectors.toList());
     }
 }

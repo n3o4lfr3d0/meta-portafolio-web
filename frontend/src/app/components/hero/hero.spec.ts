@@ -1,7 +1,9 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProfileService } from '../../services/profile.service';
+import { ThemeService } from '../../services/theme.service';
 import { LogoComponent } from '../ui/logo/logo.component';
 import { HeroComponent } from './hero';
 
@@ -9,6 +11,7 @@ describe('HeroComponent', () => {
   let component: HeroComponent;
   let fixture: ComponentFixture<HeroComponent>;
   let profileServiceMock: any;
+  let themeServiceMock: any;
 
   const mockProfile = {
     name: 'Test Name',
@@ -25,10 +28,15 @@ describe('HeroComponent', () => {
       getProfile: vi.fn().mockReturnValue(of(mockProfile))
     };
 
+    themeServiceMock = {
+      language: signal('es')
+    };
+
     await TestBed.configureTestingModule({
       imports: [HeroComponent, LogoComponent],
       providers: [
-        { provide: ProfileService, useValue: profileServiceMock }
+        { provide: ProfileService, useValue: profileServiceMock },
+        { provide: ThemeService, useValue: themeServiceMock }
       ]
     }).compileComponents();
 
@@ -43,9 +51,12 @@ describe('HeroComponent', () => {
 
   it('should load profile data', () => {
     expect(profileServiceMock.getProfile).toHaveBeenCalled();
-    // Since it uses toSignal, we might need to check the signal value or template
-    // However, checking component.profile() is direct
     const profile = component.profile();
     expect(profile).toEqual(mockProfile);
   });
+
+  it('should have correct CV download URL', () => {
+    expect(component.cvUrl()).toContain('/profile/cv?lang=es');
+  });
 });
+

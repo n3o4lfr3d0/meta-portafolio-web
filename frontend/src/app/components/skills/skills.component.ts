@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
 import { SkillService } from '../../services/skill.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-skills',
@@ -11,7 +13,14 @@ import { SkillService } from '../../services/skill.service';
 })
 export class SkillsComponent {
   private readonly skillService = inject(SkillService);
-  skills = toSignal(this.skillService.getSkills(), { initialValue: [] });
+  public readonly themeService = inject(ThemeService);
+
+  skills = toSignal(
+    toObservable(this.themeService.language).pipe(
+      switchMap(lang => this.skillService.getSkills(lang))
+    ),
+    { initialValue: [] }
+  );
 
   technicalSkills = computed(() => {
     const skills = this.skills().filter(s => s.category !== 'Soft Skills');

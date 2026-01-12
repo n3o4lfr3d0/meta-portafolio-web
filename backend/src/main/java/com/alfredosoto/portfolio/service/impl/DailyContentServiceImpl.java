@@ -28,7 +28,8 @@ public class DailyContentServiceImpl implements DailyContentService {
 
     // Static list of tips to rotate
     private static final Random RANDOM = new Random();
-    private static final List<String> TIPS = Arrays.asList(
+    private static final String STEVE_JOBS = "Steve Jobs";
+    private static final List<String> TIPS_ES = Arrays.asList(
         "Limpia tu código como si la persona que fuera a mantenerlo fuera un psicópata violento que sabe dónde vives.",
         "Si no está probado, está roto.",
         "Premature optimization is the root of all evil.",
@@ -41,6 +42,30 @@ public class DailyContentServiceImpl implements DailyContentService {
         "Git es tu amigo. Haz commits pequeños y frecuentes."
     );
 
+    private static final List<String> TIPS_EN = Arrays.asList(
+        "Clean your code as if the person who ends up maintaining it is a violent psychopath who knows where you live.",
+        "If it's not tested, it's broken.",
+        "Premature optimization is the root of all evil.",
+        "Learn your IDE keyboard shortcuts. They will save you hours in the long run.",
+        "Document the 'why', not the 'what'. The code explains the 'what'.",
+        "Use descriptive variable names. 'x' is not a valid name (unless it's a coordinate).",
+        "Divide and conquer: Small functions are easier to test and understand.",
+        "Don't reinvent the wheel. Use standard libraries whenever possible.",
+        "Keep your dependencies updated to avoid security vulnerabilities.",
+        "Git is your friend. Commit early and often."
+    );
+
+    private static final List<List<String>> QUOTES_ES = Arrays.asList(
+        Arrays.asList("La única forma de hacer un gran trabajo es amar lo que haces.", STEVE_JOBS),
+        Arrays.asList("El software se está comiendo el mundo.", "Marc Andreessen"),
+        Arrays.asList("Primero resuelve el problema. Entonces, escribe el código.", "John Johnson"),
+        Arrays.asList("Java es a JavaScript lo que el Carro es al Carroza.", "Chris Heilmann"),
+        Arrays.asList("El código es como el humor. Cuando tienes que explicarlo, es malo.", "Cory House"),
+        Arrays.asList("La simplicidad es el alma de la eficiencia.", "Austin Freeman"),
+        Arrays.asList("No te preocupes si no funciona bien. Si todo estuviera correcto, serías despedido del trabajo.", "Ley de Mosher"),
+        Arrays.asList("Medir el progreso de la programación por líneas de código es como medir el progreso de la construcción de aviones por el peso.", "Bill Gates")
+    );
+
     public DailyContentServiceImpl(DailyContentRepository repository, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.repository = repository;
         this.restTemplate = restTemplate;
@@ -48,12 +73,15 @@ public class DailyContentServiceImpl implements DailyContentService {
     }
 
     @Override
-    public DailyContentDTO getDailyContent() {
+    public DailyContentDTO getDailyContent(String lang) {
         try {
             String today = LocalDate.now().toString();
-            logger.info("Checking daily content for date: {}", today);
+            // Composite key for localization support
+            String key = today + "_" + lang;
             
-            Optional<DailyContentEntity> existingContent = findExistingContent(today);
+            logger.info("Checking daily content for key: {}", key);
+            
+            Optional<DailyContentEntity> existingContent = findExistingContent(key);
 
             if (existingContent.isPresent()) {
                 DailyContentEntity entity = existingContent.get();
@@ -69,7 +97,7 @@ public class DailyContentServiceImpl implements DailyContentService {
             }
 
             // Fetch new content
-            DailyContentEntity newContent = fetchAndCreateDailyContent(today);
+            DailyContentEntity newContent = fetchAndCreateDailyContent(key, lang);
             
             saveNewContent(newContent);
             
@@ -78,13 +106,23 @@ public class DailyContentServiceImpl implements DailyContentService {
         } catch (Exception e) {
             logger.error("CRITICAL ERROR in getDailyContent: {}", e.getMessage(), e);
             // Emergency fallback
-            return new DailyContentDTO(
-                LocalDate.now().toString(),
-                "Mantén la calma y sigue codificando (Fallback Mode).",
-                "Si el código no funciona, no es culpa del compilador.",
-                "Anónimo",
-                "¿Por qué el servidor cruzó la calle? Para llegar al otro lado (del firewall)."
-            );
+            if ("es".equals(lang)) {
+                return new DailyContentDTO(
+                    LocalDate.now().toString(),
+                    "Mantén la calma y sigue codificando (Fallback Mode).",
+                    "Si el código no funciona, no es culpa del compilador.",
+                    "Anónimo",
+                    "¿Por qué el servidor cruzó la calle? Para llegar al otro lado (del firewall)."
+                );
+            } else {
+                return new DailyContentDTO(
+                    LocalDate.now().toString(),
+                    "Keep calm and code on (Fallback Mode).",
+                    "If the code doesn't work, it's not the compiler's fault.",
+                    "Anonymous",
+                    "Why did the server cross the road? To get to the other side (of the firewall)."
+                );
+            }
         }
     }
 
@@ -113,54 +151,109 @@ public class DailyContentServiceImpl implements DailyContentService {
                entity.getJoke() != null && !entity.getJoke().isEmpty();
     }
 
-    private DailyContentEntity fetchAndCreateDailyContent(String date) {
+    private DailyContentEntity fetchAndCreateDailyContent(String dateKey, String lang) {
         DailyContentEntity entity = new DailyContentEntity();
-        entity.setDate(date);
+        entity.setDate(dateKey); // dateKey is "YYYY-MM-DD_lang"
         
-        // 1. Pick a Tip
-        entity.setTip(TIPS.get(RANDOM.nextInt(TIPS.size())));
+        setRandomTip(entity, lang);
+        fetchAndSetQuote(entity, lang);
+        fetchAndSetJoke(entity, lang);
 
-        // 2. Fetch Quote
-        try {
-            // Added maxLength=120 to ensure short quotes (UI/UX optimization)
-            String quoteJson = restTemplate.getForObject("https://api.quotable.io/random?tags=technology,inspirational&maxLength=120", String.class);
-            JsonNode root = objectMapper.readTree(quoteJson);
-            String content = root.path("content").asText();
-            String author = root.path("author").asText();
-            
-            if (content.isEmpty() || author.isEmpty()) throw new IllegalStateException("Empty quote response");
-            
-            entity.setQuote(content);
-            entity.setQuoteAuthor(author);
-        } catch (Exception e) {
-            entity.setQuote("The only way to do great work is to love what you do.");
-            entity.setQuoteAuthor("Steve Jobs");
+        return entity;
+    }
+
+    private void setRandomTip(DailyContentEntity entity, String lang) {
+        if ("es".equals(lang)) {
+            entity.setTip(TIPS_ES.get(RANDOM.nextInt(TIPS_ES.size())));
+        } else {
+            entity.setTip(TIPS_EN.get(RANDOM.nextInt(TIPS_EN.size())));
         }
+    }
 
-        // 3. Fetch Joke
+    private void fetchAndSetQuote(DailyContentEntity entity, String lang) {
         try {
-            // Using safe-mode and type=single. We will manually check length.
-            String jokeJson = restTemplate.getForObject("https://v2.jokeapi.dev/joke/Programming?safe-mode&type=single", String.class);
-            JsonNode root = objectMapper.readTree(jokeJson);
-            
-            if (root.path("error").asBoolean()) {
-                throw new IllegalStateException("Joke API error");
+            if ("es".equals(lang)) {
+                setSpanishQuote(entity);
+            } else {
+                fetchEnglishQuoteFromApi(entity);
             }
-            
-            String joke = root.path("joke").asText();
-            if (joke.isEmpty()) throw new IllegalStateException("Empty joke response");
+        } catch (Exception e) {
+            setFallbackQuote(entity, lang);
+        }
+    }
+
+    private void setSpanishQuote(DailyContentEntity entity) {
+        List<String> quotePair = QUOTES_ES.get(RANDOM.nextInt(QUOTES_ES.size()));
+        entity.setQuote(quotePair.get(0));
+        entity.setQuoteAuthor(quotePair.get(1));
+    }
+
+    private void fetchEnglishQuoteFromApi(DailyContentEntity entity) throws Exception {
+        // Added maxLength=120 to ensure short quotes (UI/UX optimization)
+        String quoteJson = restTemplate.getForObject("https://api.quotable.io/random?tags=technology,inspirational&maxLength=120", String.class);
+        JsonNode root = objectMapper.readTree(quoteJson);
+        String content = root.path("content").asText();
+        String author = root.path("author").asText();
+        
+        if (content.isEmpty() || author.isEmpty()) throw new IllegalStateException("Empty quote response");
+        
+        entity.setQuote(content);
+        entity.setQuoteAuthor(author);
+    }
+
+    private void setFallbackQuote(DailyContentEntity entity, String lang) {
+        if ("es".equals(lang)) {
+            entity.setQuote("La única forma de hacer un gran trabajo es amar lo que haces.");
+            entity.setQuoteAuthor(STEVE_JOBS);
+        } else {
+            entity.setQuote("The only way to do great work is to love what you do.");
+            entity.setQuoteAuthor(STEVE_JOBS);
+        }
+    }
+
+    private void fetchAndSetJoke(DailyContentEntity entity, String lang) {
+        try {
+            String url = buildJokeApiUrl(lang);
+            String joke = fetchJokeFromApi(url);
             
             // UI/UX: If joke is too long, fallback to a shorter one to prevent card overflow
-            if (joke.length() > 150) {
-                 entity.setJoke("There are 10 types of people in the world: Those who understand binary, and those who don't.");
+            if (joke.length() > 200) {
+                 setFallbackJoke(entity, lang);
             } else {
                  entity.setJoke(joke);
             }
         } catch (Exception e) {
+             setFallbackJoke(entity, lang);
+        }
+    }
+
+    private String buildJokeApiUrl(String lang) {
+        String url = "https://v2.jokeapi.dev/joke/Programming?safe-mode&type=single";
+        if ("es".equals(lang)) {
+            url += "&lang=es";
+        }
+        return url;
+    }
+
+    private String fetchJokeFromApi(String url) throws Exception {
+        String jokeJson = restTemplate.getForObject(url, String.class);
+        JsonNode root = objectMapper.readTree(jokeJson);
+        
+        if (root.path("error").asBoolean()) {
+            throw new IllegalStateException("Joke API error");
+        }
+        
+        String joke = root.path("joke").asText();
+        if (joke.isEmpty()) throw new IllegalStateException("Empty joke response");
+        return joke;
+    }
+
+    private void setFallbackJoke(DailyContentEntity entity, String lang) {
+        if ("es".equals(lang)) {
+            entity.setJoke("Hay 10 tipos de personas en el mundo: Las que entienden binario y las que no.");
+        } else {
             entity.setJoke("There are 10 types of people in the world: Those who understand binary, and those who don't.");
         }
-
-        return entity;
     }
 
     private DailyContentDTO mapToDTO(DailyContentEntity entity) {

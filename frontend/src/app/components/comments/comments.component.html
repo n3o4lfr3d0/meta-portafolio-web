@@ -1,0 +1,118 @@
+<section id="comentarios" class="section py-20 px-4 md:px-8">
+  <div class="max-w-4xl mx-auto space-y-12">
+    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-600">
+      {{ themeService.language() === 'es' ? 'Comentarios' : 'Comments' }}
+    </h2>
+
+    <!-- Formulario -->
+    <div class="bg-card-custom p-6 rounded-xl border border-card-custom shadow-lg">
+      <h3 class="text-xl font-bold mb-4 text-default">{{ themeService.language() === 'es' ? 'Deja un comentario' : 'Leave a comment' }}</h3>
+
+      <form [formGroup]="commentForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div>
+          <label for="username" class="block text-sm font-medium mb-1 text-muted-custom">{{ themeService.language() === 'es' ? 'Nombre' : 'Name' }}</label>
+          <input
+            type="text"
+            id="username"
+            formControlName="username"
+            class="w-full px-4 py-2 rounded-lg bg-black/5 dark:bg-black/20 border border-black/10 dark:border-white/10 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all text-default"
+            [placeholder]="themeService.language() === 'es' ? 'Tu nombre' : 'Your name'"
+          />
+        </div>
+
+        <div>
+          <label for="content" class="block text-sm font-medium mb-1 text-muted-custom">{{ themeService.language() === 'es' ? 'Mensaje' : 'Message' }}</label>
+          <textarea
+            id="content"
+            formControlName="content"
+            rows="3"
+            class="w-full px-4 py-2 rounded-lg bg-black/5 dark:bg-black/20 border border-black/10 dark:border-white/10 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all text-default"
+            [placeholder]="themeService.language() === 'es' ? 'Escribe tu mensaje aquí...' : 'Write your message here...'"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="commentForm.invalid || isSubmitting()"
+          class="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+        >
+          @if (isSubmitting()) {
+            <span class="loading loading-spinner loading-sm mr-2"></span>
+            {{ themeService.language() === 'es' ? 'Enviando...' : 'Sending...' }}
+          } @else {
+            {{ themeService.language() === 'es' ? 'Enviar Comentario' : 'Submit Comment' }}
+          }
+        </button>
+      </form>
+    </div>
+
+    <!-- Lista de Comentarios -->
+    <div class="space-y-6">
+      @for (comment of comments(); track comment.id) {
+        <div class="bg-card-custom p-6 rounded-xl border border-card-custom shadow-lg">
+          <div class="flex justify-between items-start mb-2">
+            <h4 class="font-bold text-lg text-green-600 dark:text-green-500">{{ comment.username }}</h4>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ comment.timestamp | date:'mediumDate' }}</span>
+              @if (getDeletionToken(comment.id!)) {
+                <div class="flex gap-2">
+                  <button
+                    (click)="startEdit(comment)"
+                    class="btn min-w-[100px] rounded-xl text-white disabled:opacity-50 shadow-md border-none bg-blue-600 hover:bg-blue-700"
+                    [title]="themeService.language() === 'es' ? 'Editar mi comentario' : 'Edit my comment'"
+                  >
+                    {{ themeService.language() === 'es' ? 'Editar' : 'Edit' }}
+                  </button>
+                  <button
+                    (click)="confirmDelete(comment.id!)"
+                    class="btn btn-ghost min-w-[100px] rounded-xl text-white border border-base-300 dark:border-white/10 bg-red-600 hover:bg-red-700 hover:bg-base-200 dark:hover:bg-white/5"
+                    [title]="themeService.language() === 'es' ? 'Eliminar mi comentario' : 'Delete my comment'"
+                  >
+                    {{ themeService.language() === 'es' ? 'Eliminar' : 'Delete' }}
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (editingCommentId() === comment.id) {
+            <div class="mt-2 space-y-2">
+              <textarea
+                [formControl]="editContentControl"
+                rows="3"
+                class="w-full px-4 py-2 rounded-lg bg-base-200 dark:bg-black/20 border border-base-300 dark:border-white/10 focus:border-green-500 outline-none text-base-content"
+              ></textarea>
+              <div class="flex gap-2 justify-end">
+                <button (click)="cancelEdit()" class="btn btn-ghost min-w-[100px] rounded-xl text-white border border-base-300 dark:border-white/10 bg-red-600 hover:bg-red-700 hover:bg-base-200 dark:hover:bg-white/5">
+                  {{ themeService.language() === 'es' ? 'Cancelar' : 'Cancel' }}
+                </button>
+                <button (click)="confirmSave(comment.id!)" class="btn min-w-[100px] rounded-xl text-white disabled:opacity-50 shadow-md border-none bg-green-600 hover:bg-green-700">
+                  {{ themeService.language() === 'es' ? 'Guardar' : 'Save' }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            <p class="text-base-content leading-relaxed">{{ comment.content }}</p>
+          }
+        </div>
+      } @empty {
+        <div class="text-center text-neutral-500 dark:text-neutral-400 py-8">
+          {{ themeService.language() === 'es' ? 'No hay comentarios aún. ¡Sé el primero en comentar!' : 'No comments yet. Be the first to comment!' }}
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Generic Action Confirmation Modal -->
+  <app-confirmation-modal
+    [title]="modalTitle()"
+    [message]="modalMessage()"
+    [actionLabel]="modalActionLabel()"
+    [cancelLabel]="themeService.language() === 'es' ? 'Cancelar' : 'Cancel'"
+    [type]="modalType()"
+    [processing]="isModalProcessing()"
+    [error]="modalError()"
+    (confirm)="executeAction()"
+    (cancel)="closeModal()"
+  ></app-confirmation-modal>
+</section>

@@ -7,12 +7,16 @@ export type Theme = 'matrix' | 'light';
 })
 export class ThemeService {
   theme = signal<Theme>(this.getInitialTheme());
+  language = signal<'es' | 'en'>('es');
 
   constructor() {
     effect(() => {
       const currentTheme = this.theme();
       localStorage.setItem('portfolio-theme', currentTheme);
       this.applyTheme(currentTheme);
+      
+      // Update language based on theme
+      this.language.set(currentTheme === 'matrix' ? 'es' : 'en');
     });
   }
 

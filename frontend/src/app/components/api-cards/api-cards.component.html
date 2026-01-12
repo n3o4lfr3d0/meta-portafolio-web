@@ -19,7 +19,7 @@
         <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
           <span class="text-3xl">💡</span>
         </div>
-        <h2 class="card-title text-primary mb-3">Tip del Día</h2>
+        <h2 class="card-title text-primary mb-3">{{ themeService.language() === 'es' ? 'Tip del Día' : 'Tip of the Day' }}</h2>
         <div class="w-full flex items-center justify-center min-h-[80px]">
             <p class="italic text-base-content/80 text-lg leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
                 "{{ content()?.tip }}"
@@ -34,7 +34,7 @@
         <div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
           <span class="text-3xl">📜</span>
         </div>
-        <h2 class="card-title text-secondary mb-3">Frase del día</h2>
+        <h2 class="card-title text-secondary mb-3">{{ themeService.language() === 'es' ? 'Frase del día' : 'Quote of the Day' }}</h2>
         <div class="w-full flex flex-col items-center justify-center min-h-[80px]">
           <p class="italic text-base-content/80 text-lg leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
             "{{ content()?.quote }}"
@@ -50,7 +50,7 @@
         <div class="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
           <span class="text-3xl">😂</span>
         </div>
-        <h2 class="card-title text-accent mb-3">Chiste del día</h2>
+        <h2 class="card-title text-accent mb-3">{{ themeService.language() === 'es' ? 'Chiste del día' : 'Joke of the Day' }}</h2>
         <div class="w-full flex items-center justify-center min-h-[80px]">
           <p class="italic text-base-content/80 text-lg leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
             {{ content()?.joke }}

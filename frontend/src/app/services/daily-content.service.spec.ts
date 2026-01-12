@@ -41,7 +41,7 @@ describe('DailyContentService', () => {
       expect(content).toEqual(mockContent);
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/daily-content`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/daily-content?lang=es`);
     expect(req.request.method).toBe('GET');
     req.flush(mockContent);
   });
@@ -60,7 +60,7 @@ describe('DailyContentService', () => {
       }
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/daily-content`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/daily-content?lang=es`);
     req.flush(errorMessage, { status: 500, statusText: 'Internal Server Error' });
   });
 });

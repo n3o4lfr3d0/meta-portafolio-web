@@ -1,9 +1,9 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { ProfileService } from './profile.service';
-import { Profile } from '../models/profile.model';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import { environment } from '../../environments/environment';
+import { Profile } from '../models/profile.model';
+import { ProfileService } from './profile.service';
 
 describe('ProfileService', () => {
   let service: ProfileService;
@@ -45,7 +45,7 @@ describe('ProfileService', () => {
       expect(profile).toEqual(dummyProfile);
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/profile`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/profile?lang=es`);
     expect(req.request.method).toBe('GET');
     req.flush(dummyProfile);
   });

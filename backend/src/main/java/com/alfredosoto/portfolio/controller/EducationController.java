@@ -4,6 +4,7 @@ import com.alfredosoto.portfolio.dto.EducationDTO;
 import com.alfredosoto.portfolio.service.EducationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class EducationController {
     }
 
     @GetMapping
-    public List<EducationDTO> getEducation() {
-        return educationService.getEducation();
+    public List<EducationDTO> getEducation(@RequestParam(defaultValue = "es") String lang) {
+        return educationService.getEducation(lang);
     }
 }

@@ -20,6 +20,9 @@
 **/*.sublime-workspace
 **/*.sublime-project
 
+# Admin Secret Config
+frontend/src/app/config/admin.config.ts
+
 # Java / Spring Boot / Backend
 **/target/
 **/*.class

@@ -11,7 +11,7 @@ export class ProfileService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/profile`;
 
-  getProfile(): Observable<Profile> {
-    return this.http.get<Profile>(this.apiUrl);
+  getProfile(lang: string = 'es'): Observable<Profile> {
+    return this.http.get<Profile>(`${this.apiUrl}?lang=${lang}`);
   }
 }

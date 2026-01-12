@@ -7,6 +7,8 @@ import com.alfredosoto.portfolio.service.ProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,13 +27,17 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDTO getProfile() {
+        return getProfile("es");
+    }
+
+    @Override
+    public ProfileDTO getProfile(String lang) {
         try {
-            ProfileEntity entity = profileRepository.getProfile();
+            ProfileEntity entity = profileRepository.getProfile(lang);
             if (entity != null) {
                 return mapToDTO(entity);
             }
         } catch (Exception e) {
-            // Log error
             logger.error("Error fetching profile from DynamoDB: {}", e.getMessage(), e);
         }
 
@@ -48,6 +54,15 @@ public class ProfileServiceImpl implements ProfileService {
                 new ProfileDTO.SocialLink("Email", "mailto:alfredo.soto@example.com", "mail")
             )
         );
+    }
+
+    @Override
+    public Resource getCv(String lang) {
+        String filename = "cv_alfredo_soto_nolazco_2026_spanish.pdf";
+        if ("en".equalsIgnoreCase(lang)) {
+            filename = "cv_alfredo_soto_nolazco_2026_english.pdf";
+        }
+        return new ClassPathResource("files/" + filename);
     }
 
     private ProfileDTO mapToDTO(ProfileEntity entity) {

@@ -35,7 +35,7 @@ describe('ExperienceService', () => {
       expect(experience).toEqual(dummyExperience);
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/experience`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/experience?lang=es`);
     expect(req.request.method).toBe('GET');
     req.flush(dummyExperience);
   });

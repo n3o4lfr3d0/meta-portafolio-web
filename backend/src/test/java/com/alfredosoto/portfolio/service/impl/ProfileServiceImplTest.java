@@ -41,7 +41,7 @@ class ProfileServiceImplTest {
         
         entity.setSocialLinks(List.of(link));
 
-        when(profileRepository.getProfile()).thenReturn(entity);
+        when(profileRepository.getProfile("es")).thenReturn(entity);
 
         // Act
         ProfileDTO result = profileService.getProfile();
@@ -56,7 +56,7 @@ class ProfileServiceImplTest {
     @Test
     void shouldReturnFallbackProfileWhenRepositoryReturnsNull() {
         // Arrange
-        when(profileRepository.getProfile()).thenReturn(null);
+        when(profileRepository.getProfile("es")).thenReturn(null);
 
         // Act
         ProfileDTO result = profileService.getProfile();
@@ -69,7 +69,7 @@ class ProfileServiceImplTest {
     @Test
     void shouldReturnFallbackProfileOnException() {
         // Arrange
-        when(profileRepository.getProfile()).thenThrow(new RuntimeException("DB Error"));
+        when(profileRepository.getProfile("es")).thenThrow(new RuntimeException("DB Error"));
 
         // Act
         ProfileDTO result = profileService.getProfile();

@@ -18,7 +18,7 @@ public class DailyContentController {
     }
 
     @GetMapping
-    public DailyContentDTO getDailyContent() {
-        return service.getDailyContent();
+    public DailyContentDTO getDailyContent(@org.springframework.web.bind.annotation.RequestParam(defaultValue = "es") String lang) {
+        return service.getDailyContent(lang);
     }
 }

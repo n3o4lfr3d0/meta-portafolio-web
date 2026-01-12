@@ -21,6 +21,12 @@ public class ProfileRepository {
 
     public ProfileEntity getProfile() {
         // Asumimos que solo hay un perfil principal con ID "main"
-        return table.getItem(r -> r.key(k -> k.partitionValue("main")));
+        // Deprecated: Use getProfile(String lang) instead. Keeping for backward compatibility defaulting to "es"
+        return getProfile("es");
+    }
+
+    public ProfileEntity getProfile(String lang) {
+        String id = "main_" + lang; // main_es, main_en
+        return table.getItem(r -> r.key(k -> k.partitionValue(id)));
     }
 }

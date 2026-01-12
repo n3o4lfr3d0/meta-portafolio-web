@@ -4,6 +4,7 @@ import com.alfredosoto.portfolio.dto.SkillDTO;
 import com.alfredosoto.portfolio.service.SkillService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class SkillController {
     }
 
     @GetMapping
-    public List<SkillDTO> getAllSkills() {
-        return skillService.getAllSkills();
+    public List<SkillDTO> getAllSkills(@RequestParam(defaultValue = "es") String lang) {
+        return skillService.getAllSkills(lang);
     }
 }

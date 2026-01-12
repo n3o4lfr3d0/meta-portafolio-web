@@ -4,7 +4,7 @@
     <!-- Technical Skills -->
     <div>
       <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">
-        Habilidades Técnicas
+        {{ themeService.language() === 'es' ? 'Habilidades Técnicas' : 'Technical Skills' }}
       </h2>
 
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -29,7 +29,7 @@
     <!-- Soft Skills -->
     <div>
       <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-600">
-        Habilidades Blandas
+        {{ themeService.language() === 'es' ? 'Habilidades Blandas' : 'Soft Skills' }}
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

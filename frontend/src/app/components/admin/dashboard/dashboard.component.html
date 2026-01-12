@@ -1,0 +1,80 @@
+<div class="min-h-screen bg-base-300 p-8">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-base-content">Admin Dashboard</h1>
+      <button (click)="logout()" class="btn btn-ghost text-error font-bold hover:bg-error/10">Logout</button>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl border border-base-200">
+      <div class="card-body p-0 sm:p-6">
+        <h2 class="card-title mb-6 px-6 pt-6 sm:px-0 sm:pt-0 text-2xl text-neutral-800">Comments Management</h2>
+
+        <div class="overflow-x-auto">
+          <table class="table w-full">
+            <thead>
+              <tr class="bg-base-200 border-b border-base-300">
+                <th class="text-neutral-900 font-bold text-lg text-left pl-6">Date</th>
+                <th class="text-neutral-900 font-bold text-lg text-left">User</th>
+                <th class="text-neutral-900 font-bold text-lg text-left">Content</th>
+                <th class="text-center text-neutral-900 font-bold text-lg">Status</th>
+                <th class="text-center text-neutral-900 font-bold text-lg pr-6">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (comment of comments(); track comment.id) {
+                <tr [class.bg-base-100]="comment.approved && !comment.pendingContent" [class.bg-warning/10]="!comment.approved || comment.pendingContent" class="hover:bg-base-200 transition-colors border-b border-base-200">
+                  <td class="text-neutral-700 font-medium pl-6">{{ comment.timestamp | date:'short' }}</td>
+                  <td class="font-bold text-neutral-800">{{ comment.username }}</td>
+                  <td class="max-w-md text-neutral-700 text-left">
+                    <div class="truncate" title="{{ comment.content }}">{{ comment.content }}</div>
+                    @if (comment.pendingContent) {
+                      <div class="mt-2 p-2 bg-warning/20 rounded-lg text-sm border border-warning/30">
+                        <span class="font-bold text-warning-content block mb-1 text-xs uppercase tracking-wider">Proposed Edit</span>
+                        <div class="text-neutral-800 break-words">{{ comment.pendingContent }}</div>
+                      </div>
+                    }
+                  </td>
+                  <td class="text-center">
+                    @if (comment.pendingContent) {
+                      <span class="badge badge-info badge-sm text-black font-bold shadow-sm">Edit Pending</span>
+                    } @else if (comment.approved) {
+                      <span class="badge badge-success badge-sm text-black font-bold shadow-sm">Approved</span>
+                    } @else {
+                      <span class="badge badge-warning badge-sm text-black font-bold shadow-sm">Pending</span>
+                    }
+                  </td>
+                  <td class="text-center pr-6">
+                    <div class="flex justify-center gap-2">
+                      @if (!comment.approved || comment.pendingContent) {
+                        <button
+                          (click)="approve(comment.id!)"
+                          class="btn min-w-[100px] rounded-xl text-white disabled:opacity-50 shadow-md border-none bg-green-600 hover:bg-green-700"
+                          [title]="comment.pendingContent ? 'Approve Edit' : 'Approve'"
+                        >
+                          {{ comment.pendingContent ? 'Accept' : 'Approve' }}
+                        </button>
+                      }
+                      <button
+                        (click)="delete(comment.id!)"
+                        class="btn btn-ghost min-w-[100px] rounded-xl text-white border border-base-300 dark:border-white/10 bg-red-600 hover:bg-red-700 hover:bg-base-200 dark:hover:bg-white/5"
+                        title="Delete"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="text-center py-8 text-neutral-500 text-lg font-medium">
+                    No comments found.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

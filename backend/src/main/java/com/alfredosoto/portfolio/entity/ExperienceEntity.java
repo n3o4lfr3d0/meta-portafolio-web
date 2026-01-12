@@ -13,9 +13,11 @@ public class ExperienceEntity {
     private String period;
     private String description;
     private String link;
+    private String language;
 
     public ExperienceEntity() {
         this.id = UUID.randomUUID().toString();
+        this.language = "es"; // Default to Spanish
     }
 
     @DynamoDbPartitionKey
@@ -41,4 +43,7 @@ public class ExperienceEntity {
 
     public String getLink() { return link; }
     public void setLink(String link) { this.link = link; }
+
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
 }

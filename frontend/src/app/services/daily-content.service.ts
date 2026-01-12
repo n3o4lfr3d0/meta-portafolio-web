@@ -18,7 +18,7 @@ export class DailyContentService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/daily-content`;
 
-  getDailyContent(): Observable<DailyContent> {
-    return this.http.get<DailyContent>(this.apiUrl);
+  getDailyContent(lang: string = 'es'): Observable<DailyContent> {
+    return this.http.get<DailyContent>(`${this.apiUrl}?lang=${lang}`);
   }
 }

@@ -5,6 +5,8 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ProfileService } from './services/profile.service';
 import { ExperienceService } from './services/experience.service';
 import { SkillService } from './services/skill.service';
+import { LanguageService } from './services/language.service';
+import { CommentService } from './services/comment.service';
 import { of } from 'rxjs';
 
 describe('App', () => {
@@ -27,6 +29,13 @@ describe('App', () => {
     const skillServiceMock = {
       getSkills: () => of([])
     };
+    const languageServiceMock = {
+      getAllLanguages: () => of([])
+    };
+    const commentServiceMock = {
+      getApprovedComments: () => of([]),
+      addComment: () => of({})
+    };
 
     await TestBed.configureTestingModule({
       imports: [App],
@@ -35,7 +44,9 @@ describe('App', () => {
         provideHttpClientTesting(),
         { provide: ProfileService, useValue: profileServiceMock },
         { provide: ExperienceService, useValue: experienceServiceMock },
-        { provide: SkillService, useValue: skillServiceMock }
+        { provide: SkillService, useValue: skillServiceMock },
+        { provide: LanguageService, useValue: languageServiceMock },
+        { provide: CommentService, useValue: commentServiceMock }
       ]
     }).compileComponents();
   });
@@ -46,13 +57,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render toast component', async () => {
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges(); // Dispara ngOnInit y señales
+    fixture.detectChanges(); 
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    // El título original "Hello, frontend" ya no existe en el template actual.
-    // Verificamos que se renderice algo del contenido, por ejemplo el Hero.
-    expect(compiled.querySelector('app-hero')).toBeTruthy();
+    expect(compiled.querySelector('app-toast')).toBeTruthy();
   });
 });

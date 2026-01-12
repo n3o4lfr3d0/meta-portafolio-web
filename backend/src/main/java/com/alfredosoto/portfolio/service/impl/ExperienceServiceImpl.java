@@ -24,8 +24,13 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public List<ExperienceDTO> getExperience() {
+        return getExperience("es");
+    }
+
+    @Override
+    public List<ExperienceDTO> getExperience(String lang) {
         try {
-            List<ExperienceEntity> entities = experienceRepository.findAll();
+            List<ExperienceEntity> entities = experienceRepository.findAll(lang);
             if (!entities.isEmpty()) {
                 return entities.stream()
                         .sorted((e1, e2) -> {

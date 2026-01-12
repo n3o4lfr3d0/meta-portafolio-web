@@ -43,7 +43,7 @@ class ExperienceServiceImplTest {
         exp2.setLink("startup.com");
 
         // Return unsorted to verify sorting logic
-        when(experienceRepository.findAll()).thenReturn(Arrays.asList(exp2, exp1));
+        when(experienceRepository.findAll("es")).thenReturn(Arrays.asList(exp2, exp1));
 
         // Act
         List<ExperienceDTO> result = experienceService.getExperience();
@@ -60,7 +60,7 @@ class ExperienceServiceImplTest {
     @Test
     void shouldReturnEmptyListWhenNoExperienceFound() {
         // Arrange
-        when(experienceRepository.findAll()).thenReturn(Collections.emptyList());
+        when(experienceRepository.findAll("es")).thenReturn(Collections.emptyList());
 
         // Act
         List<ExperienceDTO> result = experienceService.getExperience();
@@ -73,7 +73,7 @@ class ExperienceServiceImplTest {
     @Test
     void shouldReturnEmptyListOnException() {
         // Arrange
-        when(experienceRepository.findAll()).thenThrow(new RuntimeException("DB Error"));
+        when(experienceRepository.findAll("es")).thenThrow(new RuntimeException("DB Error"));
 
         // Act
         List<ExperienceDTO> result = experienceService.getExperience();

@@ -40,7 +40,7 @@ class SkillServiceImplTest {
         skill2.setLevel(85);
         skill2.setIcon("angular.png");
 
-        when(skillRepository.findAll()).thenReturn(Arrays.asList(skill1, skill2));
+        when(skillRepository.findAll("es")).thenReturn(Arrays.asList(skill1, skill2));
 
         // Act
         List<SkillDTO> result = skillService.getAllSkills();
@@ -58,7 +58,7 @@ class SkillServiceImplTest {
     @Test
     void shouldReturnEmptyListWhenNoSkillsFound() {
         // Arrange
-        when(skillRepository.findAll()).thenReturn(Collections.emptyList());
+        when(skillRepository.findAll("es")).thenReturn(Collections.emptyList());
 
         // Act
         List<SkillDTO> result = skillService.getAllSkills();
@@ -71,7 +71,7 @@ class SkillServiceImplTest {
     @Test
     void shouldReturnEmptyListOnException() {
         // Arrange
-        when(skillRepository.findAll()).thenThrow(new RuntimeException("DynamoDB error"));
+        when(skillRepository.findAll("es")).thenThrow(new RuntimeException("DynamoDB error"));
 
         // Act
         List<SkillDTO> result = skillService.getAllSkills();

@@ -1,6 +1,9 @@
-import { Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ProfileService } from '../../services/profile.service';
+import { ThemeService } from '../../services/theme.service';
 import { LogoComponent } from '../ui/logo/logo.component';
 
 @Component({
@@ -11,5 +14,12 @@ import { LogoComponent } from '../ui/logo/logo.component';
 })
 export class HeroComponent {
   private readonly profileService = inject(ProfileService);
-  profile = toSignal(this.profileService.getProfile());
+  public readonly themeService = inject(ThemeService);
+
+  profile = toSignal(
+    toObservable(this.themeService.language).pipe(
+      switchMap(lang => this.profileService.getProfile(lang))
+    )
+  );
+  cvUrl = computed(() => `${environment.apiUrl}/profile/cv?lang=${this.themeService.language()}`);
 }

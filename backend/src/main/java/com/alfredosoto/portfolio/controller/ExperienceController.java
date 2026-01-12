@@ -4,6 +4,7 @@ import com.alfredosoto.portfolio.dto.ExperienceDTO;
 import com.alfredosoto.portfolio.service.ExperienceService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ExperienceController {
     }
 
     @GetMapping
-    public List<ExperienceDTO> getExperience() {
-        return experienceService.getExperience();
+    public List<ExperienceDTO> getExperience(@RequestParam(defaultValue = "es") String lang) {
+        return experienceService.getExperience(lang);
     }
 }

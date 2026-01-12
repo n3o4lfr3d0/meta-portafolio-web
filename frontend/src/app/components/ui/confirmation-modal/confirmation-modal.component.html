@@ -1,0 +1,40 @@
+<dialog #modal class="bg-card-custom p-6 rounded-xl border border-card-custom shadow-lg">
+    <h3 class="font-bold text-2xl text-center mb-4 text-default">
+      {{ title }}
+    </h3>
+    <p class="py-4 text-center text-lg leading-relaxed text-muted-custom">
+      {{ message }}
+    </p>
+
+    @if (error) {
+      <div class="alert alert-error text-white text-sm py-2 mb-4 shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span>{{ error }}</span>
+      </div>
+    }
+
+    <div class="modal-action flex justify-center gap-4 mt-6">
+      <div class="flex gap-4 w-full justify-center">
+        <button
+          type="button"
+          (click)="onCancel()"
+          [disabled]="processing"
+          class="btn btn-ghost min-w-[100px] rounded-xl border border-base-300 dark:border-white/10 text-default disabled:opacity-50 hover:bg-base-200 dark:hover:bg-white/5"
+        >
+          {{ cancelLabel }}
+        </button>
+        <button
+          type="button"
+          (click)="onConfirm()"
+          [disabled]="processing"
+          class="btn min-w-[100px] rounded-xl text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-md border-none"
+          [ngClass]="type === 'delete' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+        >
+          @if (processing) {
+            <span class="loading loading-spinner loading-xs"></span>
+          }
+          {{ actionLabel }}
+        </button>
+      </div>
+    </div>
+</dialog>

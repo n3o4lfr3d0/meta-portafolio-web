@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface SkillService {
     List<SkillDTO> getAllSkills();
+    List<SkillDTO> getAllSkills(String lang);
 }

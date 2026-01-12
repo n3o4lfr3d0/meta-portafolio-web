@@ -40,7 +40,7 @@ describe('SkillService', () => {
       expect(skills).toEqual(dummySkills);
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/skills`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/skills?lang=es`);
     expect(req.request.method).toBe('GET');
     req.flush(dummySkills);
   });

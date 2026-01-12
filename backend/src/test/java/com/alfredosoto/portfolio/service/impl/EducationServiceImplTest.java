@@ -42,7 +42,7 @@ class EducationServiceImplTest {
         entity2.setDescription("Desc B");
         entity2.setLink("Link B");
 
-        when(educationRepository.findAll()).thenReturn(Arrays.asList(entity1, entity2));
+        when(educationRepository.findAll("es")).thenReturn(Arrays.asList(entity1, entity2));
 
         // Act
         List<EducationDTO> result = educationService.getEducation();
@@ -60,7 +60,7 @@ class EducationServiceImplTest {
     @Test
     void shouldReturnEmptyListWhenRepositoryIsEmpty() {
         // Arrange
-        when(educationRepository.findAll()).thenReturn(Collections.emptyList());
+        when(educationRepository.findAll("es")).thenReturn(Collections.emptyList());
 
         // Act
         List<EducationDTO> result = educationService.getEducation();

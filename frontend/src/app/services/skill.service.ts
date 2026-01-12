@@ -11,7 +11,7 @@ export class SkillService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/skills`;
 
-  getSkills(): Observable<Skill[]> {
-    return this.http.get<Skill[]>(this.apiUrl);
+  getSkills(lang: string = 'es'): Observable<Skill[]> {
+    return this.http.get<Skill[]>(`${this.apiUrl}?lang=${lang}`);
   }
 }

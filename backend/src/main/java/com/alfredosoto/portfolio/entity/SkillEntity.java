@@ -12,6 +12,7 @@ public class SkillEntity {
     private String category;
     private Integer level;
     private String icon;
+    private String language;
 
     public SkillEntity() {
         this.id = UUID.randomUUID().toString();
@@ -37,4 +38,7 @@ public class SkillEntity {
 
     public String getIcon() { return icon; }
     public void setIcon(String icon) { this.icon = icon; }
+
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
 }

@@ -24,8 +24,13 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public List<SkillDTO> getAllSkills() {
+        return getAllSkills("es");
+    }
+
+    @Override
+    public List<SkillDTO> getAllSkills(String lang) {
         try {
-            List<SkillEntity> entities = skillRepository.findAll();
+            List<SkillEntity> entities = skillRepository.findAll(lang);
             if (!entities.isEmpty()) {
                 return entities.stream()
                         .map(this::mapToDTO)

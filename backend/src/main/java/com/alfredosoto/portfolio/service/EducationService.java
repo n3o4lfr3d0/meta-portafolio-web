@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface EducationService {
     List<EducationDTO> getEducation();
+    List<EducationDTO> getEducation(String lang);
 }

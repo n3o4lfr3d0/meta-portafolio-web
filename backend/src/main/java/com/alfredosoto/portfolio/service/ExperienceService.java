@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface ExperienceService {
     List<ExperienceDTO> getExperience();
+    List<ExperienceDTO> getExperience(String lang);
 }

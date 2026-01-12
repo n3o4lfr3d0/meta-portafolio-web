@@ -11,7 +11,7 @@ export class EducationService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/education`;
 
-  getEducation(): Observable<Education[]> {
-    return this.http.get<Education[]>(this.apiUrl);
+  getEducation(lang: string = 'es'): Observable<Education[]> {
+    return this.http.get<Education[]>(`${this.apiUrl}?lang=${lang}`);
   }
 }

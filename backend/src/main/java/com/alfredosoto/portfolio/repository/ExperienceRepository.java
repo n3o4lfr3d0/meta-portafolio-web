@@ -26,7 +26,23 @@ public class ExperienceRepository {
         table.deleteItem(experience);
     }
 
+    public void deleteAll() {
+        System.out.println("DEBUG: Starting deleteAll for Experience...");
+        int count = 0;
+        for (ExperienceEntity item : table.scan().items()) {
+            table.deleteItem(item);
+            count++;
+        }
+        System.out.println("DEBUG: Deleted " + count + " items from Experience.");
+    }
+
     public List<ExperienceEntity> findAll() {
-        return table.scan().items().stream().collect(Collectors.toList());
+        return findAll("es");
+    }
+
+    public List<ExperienceEntity> findAll(String lang) {
+        return table.scan().items().stream()
+                .filter(e -> lang.equals(e.getLanguage()))
+                .collect(Collectors.toList());
     }
 }
