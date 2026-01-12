@@ -27,13 +27,9 @@ public class ExperienceRepository {
     }
 
     public void deleteAll() {
-        System.out.println("DEBUG: Starting deleteAll for Experience...");
-        int count = 0;
         for (ExperienceEntity item : table.scan().items()) {
             table.deleteItem(item);
-            count++;
         }
-        System.out.println("DEBUG: Deleted " + count + " items from Experience.");
     }
 
     public List<ExperienceEntity> findAll() {

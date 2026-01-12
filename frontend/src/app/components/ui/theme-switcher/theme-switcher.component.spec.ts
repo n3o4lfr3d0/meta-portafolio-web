@@ -13,6 +13,7 @@ describe('ThemeSwitcherComponent', () => {
   beforeEach(async () => {
     themeServiceMock = {
       theme: signal('matrix'),
+      language: signal('es'),
       toggleTheme: vi.fn()
     };
 
@@ -33,13 +34,13 @@ describe('ThemeSwitcherComponent', () => {
   });
 
   it('should toggle to light theme', () => {
-    const lightButton = fixture.debugElement.query(By.css('button[title*="Light Mode"]'));
+    const lightButton = fixture.debugElement.query(By.css('.bg-red-600'));
     lightButton.nativeElement.click();
     expect(themeServiceMock.toggleTheme).toHaveBeenCalledWith('light');
   });
 
   it('should toggle to matrix theme', () => {
-    const matrixButton = fixture.debugElement.query(By.css('button[title*="Matrix Mode"]'));
+    const matrixButton = fixture.debugElement.query(By.css('.bg-blue-600'));
     matrixButton.nativeElement.click();
     expect(themeServiceMock.toggleTheme).toHaveBeenCalledWith('matrix');
   });

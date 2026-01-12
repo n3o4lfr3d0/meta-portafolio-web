@@ -7,36 +7,75 @@ import { ThemeService } from '../../../services/theme.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-4 items-center animate-fade-in">
-      <!-- Tooltip/Message -->
-      <div class="bg-black/80 text-green-400 text-xs font-mono px-3 py-1 rounded border border-green-500/30 mb-2 backdrop-blur-sm">
-        Choose your reality
+    <div class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end animate-fade-in">
+      <!-- Dynamic Title -->
+      <div [class]="titleClasses()">
+        {{ titleText() }}
       </div>
 
-      <div class="flex gap-4 bg-black/40 p-2 rounded-full backdrop-blur-md border border-white/10">
-        <!-- Red Pill (Light Mode) -->
+      <div [class]="containerClasses()">
+        <!-- Red Pill (Light Mode / English) -->
         <button
           (click)="setTheme('light')"
-          class="w-8 h-8 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.6)] hover:scale-110 transition-transform border border-red-400"
+          class="group relative w-8 h-8 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.6)] hover:scale-110 transition-transform border border-red-400"
           [class.ring-2]="themeService.theme() === 'light'"
           [class.ring-white]="themeService.theme() === 'light'"
-          title="Ignorance is bliss (Light Mode)"
-        ></button>
+        >
+          <!-- Tooltip -->
+          <div [class]="tooltipClasses()">
+            English
+          </div>
+        </button>
 
-        <!-- Blue Pill (Matrix Mode) -->
+        <!-- Blue Pill (Matrix Mode / Spanish) -->
         <button
           (click)="setTheme('matrix')"
-          class="w-8 h-8 rounded-full bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.6)] hover:scale-110 transition-transform border border-blue-400"
+          class="group relative w-8 h-8 rounded-full bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.6)] hover:scale-110 transition-transform border border-blue-400"
           [class.ring-2]="themeService.theme() === 'matrix'"
           [class.ring-white]="themeService.theme() === 'matrix'"
-          title="Stay in Wonderland (Matrix Mode)"
-        ></button>
+        >
+          <!-- Tooltip -->
+          <div [class]="tooltipClasses()">
+            Español
+          </div>
+        </button>
       </div>
     </div>
   `
 })
 export class ThemeSwitcherComponent {
   themeService = inject(ThemeService);
+
+  titleText() {
+    return this.themeService.language() === 'es' ? 'Elige tu idioma' : 'Choose your language';
+  }
+
+  titleClasses() {
+    const base = "text-xs font-mono px-3 py-1 rounded mb-2 backdrop-blur-sm transition-all duration-300 border";
+    if (this.themeService.theme() === 'matrix') {
+      return `${base} bg-black/90 text-green-400 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.3)]`;
+    } else {
+      return `${base} bg-white/90 text-gray-800 border-gray-300 shadow-lg font-sans font-bold`;
+    }
+  }
+
+  containerClasses() {
+    const base = "flex gap-4 p-2 rounded-full backdrop-blur-md border transition-all duration-300";
+    if (this.themeService.theme() === 'matrix') {
+      return `${base} bg-black/40 border-white/10`;
+    } else {
+      return `${base} bg-white/40 border-black/10 shadow-md`;
+    }
+  }
+
+  tooltipClasses() {
+    const base = "absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 border";
+    if (this.themeService.theme() === 'matrix') {
+      return `${base} bg-black/90 text-green-400 border-green-500/50 shadow-md font-mono`;
+    } else {
+      return `${base} bg-white text-gray-800 border-gray-200 shadow-lg font-sans font-medium`;
+    }
+  }
 
   setTheme(theme: 'matrix' | 'light') {
     this.themeService.toggleTheme(theme);

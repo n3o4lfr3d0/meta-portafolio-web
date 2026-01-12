@@ -8,6 +8,7 @@ import com.alfredosoto.portfolio.repository.EducationRepository;
 import com.alfredosoto.portfolio.repository.ExperienceRepository;
 import com.alfredosoto.portfolio.repository.ProfileRepository;
 import com.alfredosoto.portfolio.repository.SkillRepository;
+import com.alfredosoto.portfolio.repository.ProjectInfoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -36,7 +37,8 @@ public class DataSeeder {
                                       ExperienceRepository experienceRepo,
                                       SkillRepository skillRepo,
                                       EducationRepository educationRepo,
-                                      com.alfredosoto.portfolio.repository.LanguageRepository languageRepo) {
+                                      com.alfredosoto.portfolio.repository.LanguageRepository languageRepo,
+                                      ProjectInfoRepository projectInfoRepo) {
         return args -> {
             logger.info("Verificando datos iniciales en DynamoDB...");
 
@@ -181,8 +183,8 @@ public class DataSeeder {
             createSkill(skillRepo, "Mockito", "QA", 85, "https://github.com/mockito/mockito.github.io/raw/master/img/logo%402x.png", "en");
 
             // Soft Skills
-            createSkill(skillRepo, "Scrum", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "es");
-            createSkill(skillRepo, "Scrum", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "en");
+            createSkill(skillRepo, "Metodologías Ágiles", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "es");
+            createSkill(skillRepo, "Agile Methodologies", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "en");
             
             createSkill(skillRepo, "Liderazgo", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/manager.svg", "es");
             createSkill(skillRepo, "Leadership", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/manager.svg", "en");
@@ -202,7 +204,7 @@ public class DataSeeder {
             createSkill(skillRepo, "Gestión del Tiempo", SOFT_SKILLS, 85, "https://api.iconify.design/flat-color-icons/clock.svg", "es");
             createSkill(skillRepo, "Time Management", SOFT_SKILLS, 85, "https://api.iconify.design/flat-color-icons/clock.svg", "en");
             
-            createSkill(skillRepo, "Mentoring", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/reading.svg", "es");
+            createSkill(skillRepo, "Mentoría", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/reading.svg", "es");
             createSkill(skillRepo, "Mentoring", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/reading.svg", "en");
             
             createSkill(skillRepo, "Inteligencia Emocional", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "es");
@@ -222,9 +224,46 @@ public class DataSeeder {
             createLanguage(languageRepo, "English", "Intermediate (B1/B2)", "en", 60, "en");
             createLanguage(languageRepo, "Portuguese", "Basic (A1/A2)", "pt", 20, "en");
 
+            // 5. Poblar Información del Proyecto (Nuevo)
+            logger.info("Limpiando tabla ProjectInfo...");
+            projectInfoRepo.deleteAll();
+
+            String esTech = """
+                - Arquitectura: Hexagonal (Puertos y Adaptadores) y Clean Architecture.
+                - Backend: Java 17+, Spring Boot 3.2.3, REST API.
+                - Base de Datos: AWS DynamoDB (NoSQL).
+                - Frontend: Angular 17+ (Componentes Standalone, Signals), Tailwind CSS.
+                - IA: API de Google Gemini (Modelo Flash).
+                - Despliegue: Contenedores Docker.
+                - Patrones Clave: DTO, Repository, Dependency Injection.
+                """;
+
+            String enTech = """
+                - Architecture: Hexagonal (Ports and Adapters) & Clean Architecture.
+                - Backend: Java 17+, Spring Boot 3.2.3, REST API.
+                - Database: AWS DynamoDB (NoSQL).
+                - Frontend: Angular 17+ (Standalone Components, Signals), Tailwind CSS.
+                - AI: Google Gemini API (Flash Model).
+                - Deployment: Docker Containers.
+                - Key Patterns: DTO, Repository, Dependency Injection.
+                """;
+
+            createProjectInfo(projectInfoRepo, "tech_stack", "Tech Stack", esTech, "es");
+            createProjectInfo(projectInfoRepo, "tech_stack", "Tech Stack", enTech, "en");
+
             logger.info("Poblado de datos completado.");
         };
     }
+
+    private void createProjectInfo(ProjectInfoRepository repo, String id, String category, String content, String lang) {
+        com.alfredosoto.portfolio.entity.ProjectInfoEntity info = new com.alfredosoto.portfolio.entity.ProjectInfoEntity();
+        info.setId(id);
+        info.setCategory(category);
+        info.setContent(content);
+        info.setLanguage(lang);
+        repo.save(info);
+    }
+
 
     private void createLanguage(com.alfredosoto.portfolio.repository.LanguageRepository repo, String name, String level, String code, Integer percentage, String lang) {
         com.alfredosoto.portfolio.entity.LanguageEntity language = new com.alfredosoto.portfolio.entity.LanguageEntity();

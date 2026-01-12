@@ -27,13 +27,9 @@ public class SkillRepository {
     }
 
     public void deleteAll() {
-        System.out.println("DEBUG: Starting deleteAll for Skills...");
-        int count = 0;
         for (SkillEntity item : table.scan().items()) {
             table.deleteItem(item);
-            count++;
         }
-        System.out.println("DEBUG: Deleted " + count + " items from Skills.");
     }
 
     public List<SkillEntity> findAll() {

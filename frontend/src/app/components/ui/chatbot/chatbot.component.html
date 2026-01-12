@@ -1,0 +1,102 @@
+    <!-- Chatbot Container -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 animate-fade-in font-sans">
+
+      <!-- Chat Window -->
+      @if (isOpen()) {
+        <div class="w-80 md:w-96 h-[500px] bg-card-custom border border-card-custom rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-slide-up origin-bottom-right">
+
+          <!-- Header -->
+          <div class="p-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white flex justify-between items-center">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                <span class="text-xl">🤖</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-sm">
+                  {{ themeService.language() === 'es' ? 'Asistente de Portafolio' : 'Portfolio Assistant' }}
+                </h3>
+                <p class="text-xs text-white/80">
+                  {{ themeService.language() === 'es' ? 'En línea | IA Potenciada' : 'Online | AI Powered' }}
+                </p>
+              </div>
+            </div>
+            <button (click)="toggleChat()" class="p-1 hover:bg-white/10 rounded-full transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Messages Area -->
+          <div #scrollContainer class="flex-1 overflow-y-auto p-4 space-y-4 bg-opacity-50" [ngClass]="{'bg-gray-50': themeService.theme() === 'light', 'bg-black/20': themeService.theme() === 'matrix'}">
+            @for (msg of messages(); track msg.timestamp) {
+              <div class="flex flex-col" [ngClass]="{'items-end': msg.sender === 'user', 'items-start': msg.sender === 'bot'}">
+                <div class="max-w-[85%] p-3 rounded-2xl text-sm shadow-sm whitespace-pre-wrap"
+                     [ngClass]="{
+                       'bg-purple-600 text-white rounded-br-none': msg.sender === 'user',
+                       'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-bl-none': msg.sender === 'bot'
+                     }">
+                  <div [innerHTML]="msg.displayContent"></div>
+                </div>
+                <span class="text-[10px] text-muted-custom mt-1 px-1">
+                  {{ msg.timestamp | date:'shortTime' }}
+                </span>
+
+                <!-- Quick Options -->
+                @if (msg.options && msg.options.length > 0) {
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    @for (option of msg.options; track option) {
+                      <button
+                        (click)="handleOption(option)"
+                        class="text-xs px-3 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500 hover:text-white transition-colors">
+                        {{ option }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            @if (isLoading()) {
+              <div class="flex flex-col items-start animate-pulse">
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl rounded-bl-none p-3 shadow-sm">
+                  <div class="flex gap-1">
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                  </div>
+                </div>
+                <span class="text-[10px] text-muted-custom mt-1 px-1">Thinking...</span>
+              </div>
+            }
+          </div>
+
+          <!-- Input Area -->
+          <div class="p-3 border-t border-card-custom bg-card-custom">
+            <form (submit)="sendMessage()" class="flex gap-2">
+              <input
+                type="text"
+                [(ngModel)]="userInput"
+                name="userInput"
+                [placeholder]="themeService.language() === 'es' ? 'Escribe un mensaje...' : 'Type a message...'"
+                class="flex-1 bg-transparent border border-gray-300 dark:border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition-colors"
+                [disabled]="isLoading()"
+              >
+              <button
+                type="submit"
+                [disabled]="!userInput.trim() || isLoading()"
+                class="p-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      }
+
+      <!-- Toggle Button -->
+      @if (!isOpen()) {
+        <button
+          (click)="toggleChat()"
+          class="w-14 h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center group">
+          <span class="text-2xl group-hover:animate-bounce">🤖</span>
+        </button>
+      }
+    </div>

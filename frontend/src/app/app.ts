@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
+import { ChatbotComponent } from './components/ui/chatbot/chatbot.component';
 import { MatrixRainComponent } from './components/ui/matrix-rain/matrix-rain.component';
 import { ThemeSwitcherComponent } from './components/ui/theme-switcher/theme-switcher.component';
 import { ToastComponent } from './components/ui/toast/toast.component';
@@ -14,7 +15,8 @@ import { ThemeService } from './services/theme.service';
     RouterOutlet,
     MatrixRainComponent,
     ThemeSwitcherComponent,
-    ToastComponent
+    ToastComponent,
+    ChatbotComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
