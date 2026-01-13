@@ -10,9 +10,10 @@ export class TourService {
   private readonly themeService = inject(ThemeService);
 
   startTour() {
-    if (this.hasSeenTour()) {
-      return;
-    }
+    // TEMPORARY: Disabled check for testing in production
+    // if (this.hasSeenTour()) {
+    //   return;
+    // }
 
     const isEs = this.themeService.language() === 'es';
     const steps = this.getSteps(isEs);
