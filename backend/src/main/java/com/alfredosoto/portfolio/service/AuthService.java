@@ -22,10 +22,14 @@ public class AuthService {
     @Value("${admin.password}")
     private String defaultAdminPassword;
 
+    @Value("${admin.username}")
+    private String defaultAdminUsername;
+
     public AuthService(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
     }
+
 
     public LoginResponse login(LoginRequest request) {
         // First check DB
@@ -46,12 +50,12 @@ public class AuthService {
             }
         }
         
-        throw new RuntimeException("Invalid credentials");
+        throw new IllegalStateException("Invalid credentials");
     }
 
     public void register(String username, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new RuntimeException("User already exists");
+            throw new IllegalStateException("User already exists");
         }
         UserEntity user = new UserEntity();
         user.setUsername(username);
@@ -61,14 +65,19 @@ public class AuthService {
     }
 
     public void createAdminUserIfNotFound() {
-        if (userRepository.findByUsername("admin").isEmpty()) {
-            UserEntity user = new UserEntity();
-            user.setUsername("admin");
-            // Use the default password from properties or hardcoded
-            user.setPasswordHash(hashPassword(defaultAdminPassword));
-            user.setRole("ADMIN");
-            userRepository.save(user);
-        }
+        // Sync admin user from properties/env vars
+        // This ensures that if the environment variables change, the DB is updated on restart
+        UserEntity user = userRepository.findByUsername(defaultAdminUsername)
+                .orElseGet(() -> {
+                    UserEntity newUser = new UserEntity();
+                    newUser.setUsername(defaultAdminUsername);
+                    newUser.setRole("ADMIN");
+                    return newUser;
+                });
+        
+        // Always update the password hash to match the current configuration
+        user.setPasswordHash(hashPassword(defaultAdminPassword));
+        userRepository.save(user);
     }
 
     private String hashPassword(String password) {
@@ -77,7 +86,7 @@ public class AuthService {
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error hashing password", e);
+            throw new IllegalStateException("Error hashing password", e);
         }
     }
 
