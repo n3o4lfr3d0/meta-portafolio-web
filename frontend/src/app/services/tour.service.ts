@@ -56,7 +56,7 @@ export class TourService {
 
 const TOUR_STEPS_CONFIG = [
   {
-    element: 'app-hero',
+    element: '#hero-section',
     es: { title: 'Bienvenido a mi Portafolio', description: 'Aquí puedes encontrar información sobre mi experiencia y habilidades.' },
     en: { title: 'Welcome to my Portfolio', description: 'Here you can find information about my experience and skills.' }
   },

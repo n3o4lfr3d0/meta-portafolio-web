@@ -48,12 +48,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   private waitForElementsAndStartTour(attempts = 0) {
     // Check for key elements across the page to ensure most sections are hydrated
+    const heroSection = document.getElementById('hero-section');
     const experienceSection = document.getElementById('experiencia');
     const educationSection = document.getElementById('educacion');
     const languagesSection = document.querySelector('app-languages');
     const contactSection = document.getElementById('contacto');
 
-    const areCriticalElementsReady = experienceSection && educationSection;
+    const areCriticalElementsReady = heroSection && experienceSection && educationSection;
     const isFullPageLikelyReady = areCriticalElementsReady && languagesSection && contactSection;
 
     // If we have critical elements and (all elements OR we've waited enough), start tour
