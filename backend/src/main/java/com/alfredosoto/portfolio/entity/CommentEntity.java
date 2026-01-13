@@ -16,11 +16,13 @@ public class CommentEntity {
     private boolean approved;
     private String deletionToken;
     private String pendingContent;
+    private boolean deleted;
 
     public CommentEntity() {
         this.id = UUID.randomUUID().toString();
         this.timestamp = Instant.now().toString();
         this.approved = false; // Default to false, requiring approval
+        this.deleted = false;
         this.deletionToken = UUID.randomUUID().toString(); // Auto-generate secret token
     }
 
