@@ -3,7 +3,7 @@
     <app-hero></app-hero>
   </section>
 
-  @defer (on viewport; prefetch on idle) {
+  @defer (on idle) {
     <section id="experiencia" class="section scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl">
       <app-experience></app-experience>
     </section>
@@ -11,7 +11,7 @@
     <div class="h-96 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
   }
 
-  @defer (on viewport; prefetch on idle) {
+  @defer (on idle) {
     <section id="educacion" class="section scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl">
       <app-education></app-education>
     </section>
@@ -19,19 +19,19 @@
     <div class="h-64 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
   }
 
-  @defer (on viewport; prefetch on idle) {
+  @defer (on idle) {
     <app-languages />
   } @placeholder {
     <div class="h-48 w-full animate-pulse bg-neutral-900/10 rounded-xl my-8"></div>
   }
 
-  @defer (on viewport; prefetch on idle) {
+  @defer (on idle) {
     <app-skills />
   } @placeholder {
     <div class="h-64 w-full animate-pulse bg-neutral-900/10 rounded-xl my-8"></div>
   }
 
-  @defer (on viewport) {
+  @defer (on idle) {
     <section id="recursos" class="section scroll-m-20 w-full mx-auto container lg:max-w-6xl md:max-w-4xl pb-32">
       <app-api-cards></app-api-cards>
     </section>
@@ -39,13 +39,13 @@
     <div class="h-96 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
   }
 
-  @defer (on viewport) {
+  @defer (on idle) {
     <app-comments />
   } @placeholder {
     <div class="h-64 w-full animate-pulse bg-neutral-900/10 rounded-xl my-8"></div>
   }
 
-  @defer (on viewport) {
+  @defer (on idle) {
     <app-contact />
   } @placeholder {
      <div class="h-96 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
