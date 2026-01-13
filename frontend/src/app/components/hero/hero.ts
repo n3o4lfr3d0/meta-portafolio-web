@@ -21,8 +21,11 @@ export class HeroComponent {
       switchMap(lang => this.profileService.getProfile(lang))
     )
   );
-  cvUrl = computed(() => this.themeService.language() === 'es' 
-    ? '/cv/alfredo_soto_cv_es.pdf' 
-    : '/cv/alfredo_soto_cv_en.pdf'
-  );
+  cvUrl = computed(() => {
+    const lang = this.themeService.language();
+    const timestamp = new Date().getTime(); // Cache buster
+    return lang === 'es' 
+      ? `/cv/alfredo_soto_cv_es.pdf?v=${timestamp}` 
+      : `/cv/alfredo_soto_cv_en.pdf?v=${timestamp}`;
+  });
 }

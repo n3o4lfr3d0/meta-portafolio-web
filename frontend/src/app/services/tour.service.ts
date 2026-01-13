@@ -41,10 +41,15 @@ export class TourService {
   }
 
   private getSteps(isEs: boolean) {
-    return TOUR_STEPS_CONFIG.map(step => ({
-      element: step.element,
-      popover: isEs ? step.es : step.en
-    }));
+    return TOUR_STEPS_CONFIG
+      .filter(step => {
+        const el = document.querySelector(step.element);
+        return !!el;
+      })
+      .map(step => ({
+        element: step.element,
+        popover: isEs ? step.es : step.en
+      }));
   }
 }
 

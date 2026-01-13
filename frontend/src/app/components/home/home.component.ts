@@ -47,19 +47,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   private waitForElementsAndStartTour(attempts = 0) {
-    // Check if critical elements exist in the DOM
+    // Check for key elements across the page to ensure most sections are hydrated
     const experienceSection = document.getElementById('experiencia');
     const educationSection = document.getElementById('educacion');
+    const languagesSection = document.querySelector('app-languages');
+    const contactSection = document.getElementById('contacto');
 
-    if (experienceSection && educationSection) {
-      // Elements are ready, start tour
-      this.tourService.startTour();
-    } else if (attempts < 20) {
-      // Retry every 500ms for up to 10 seconds
+    const areCriticalElementsReady = experienceSection && educationSection;
+    const isFullPageLikelyReady = areCriticalElementsReady && languagesSection && contactSection;
+
+    // If we have critical elements and (all elements OR we've waited enough), start tour
+    if (isFullPageLikelyReady || (areCriticalElementsReady && attempts > 10)) {
+      // Give a tiny extra buffer for layout stability
+      setTimeout(() => this.tourService.startTour(), 100);
+    } else if (attempts < 30) { // Wait up to 15 seconds (30 * 500ms)
       setTimeout(() => this.waitForElementsAndStartTour(attempts + 1), 500);
     } else {
-      // Fallback: Start tour anyway if timeout reached (driver.js handles missing elements gracefully-ish)
-      console.warn('Tour started but some elements might be missing due to timeout');
+      console.warn('Tour started with partial elements due to timeout');
       this.tourService.startTour();
     }
   }

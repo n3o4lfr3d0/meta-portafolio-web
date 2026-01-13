@@ -21,6 +21,25 @@ describe('TourService', () => {
       language: vi.fn().mockReturnValue('es') // Default to Spanish for test
     };
 
+    // Create dummy elements for all steps in the DOM
+    const selectors = [
+      'app-hero', '#repo-promo-link', '#experiencia', '#educacion',
+      'app-languages', '#tech-skills-title', '#soft-skills-section',
+      '#comment-form', '#api-cards-section', '#contacto',
+      '#chatbot-container', '#theme-switcher-container'
+    ];
+
+    selectors.forEach(selector => {
+      if (selector.startsWith('#')) {
+        const el = document.createElement('div');
+        el.id = selector.substring(1);
+        document.body.appendChild(el);
+      } else {
+        const el = document.createElement(selector);
+        document.body.appendChild(el);
+      }
+    });
+
     TestBed.configureTestingModule({
       providers: [
         TourService,
@@ -31,6 +50,10 @@ describe('TourService', () => {
 
     // Clear localStorage
     localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should be created', () => {
