@@ -24,7 +24,7 @@ export class HeroComponent {
     const lang = this.themeService.language();
     const timestamp = Date.now(); // Cache buster
     return lang === 'es'
-      ? `/cv/alfredo_soto_cv_es.pdf?v=${timestamp}`
-      : `/cv/alfredo_soto_cv_en.pdf?v=${timestamp}`;
+      ? `/assets/cv/alfredo_soto_cv_es.pdf?v=${timestamp}`
+      : `/assets/cv/alfredo_soto_cv_en.pdf?v=${timestamp}`;
   });
 }

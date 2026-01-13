@@ -61,13 +61,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (isFullPageLikelyReady || (areCriticalElementsReady && attempts > 10)) {
       // Add a small delay to ensure layout stability
       setTimeout(() => {
-        this.tourService.startTour();
+        // TEMPORARY: Disabled tour due to production issues
+        // this.tourService.startTour();
       }, 500);
     } else if (attempts < 30) { // Wait up to 15 seconds (30 * 500ms)
       setTimeout(() => this.waitForElementsAndStartTour(attempts + 1), 500);
     } else {
       console.warn('Tour started with partial elements due to timeout');
-      this.tourService.startTour();
+      // TEMPORARY: Disabled tour due to production issues
+      // this.tourService.startTour();
     }
   }
 }
