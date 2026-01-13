@@ -42,10 +42,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      // Small delay to ensure everything is rendered
-      setTimeout(() => {
-        this.tourService.startTour();
-      }, 1500);
+      this.waitForElementsAndStartTour();
+    }
+  }
+
+  private waitForElementsAndStartTour(attempts = 0) {
+    // Check if critical elements exist in the DOM
+    const experienceSection = document.getElementById('experiencia');
+    const educationSection = document.getElementById('educacion');
+
+    if (experienceSection && educationSection) {
+      // Elements are ready, start tour
+      this.tourService.startTour();
+    } else if (attempts < 20) {
+      // Retry every 500ms for up to 10 seconds
+      setTimeout(() => this.waitForElementsAndStartTour(attempts + 1), 500);
+    } else {
+      // Fallback: Start tour anyway if timeout reached (driver.js handles missing elements gracefully-ish)
+      console.warn('Tour started but some elements might be missing due to timeout');
+      this.tourService.startTour();
     }
   }
 }
