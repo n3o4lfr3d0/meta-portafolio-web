@@ -19,7 +19,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    @Value("${admin.password:admin123}")
+    @Value("${admin.password}")
     private String defaultAdminPassword;
 
     public AuthService(UserRepository userRepository, JwtService jwtService) {

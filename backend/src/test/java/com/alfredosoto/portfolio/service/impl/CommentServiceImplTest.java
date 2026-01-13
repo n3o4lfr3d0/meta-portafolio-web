@@ -83,7 +83,7 @@ class CommentServiceImplTest {
         
         assertEquals(OLD_CONTENT, updated.getContent());
         assertEquals(newContent, updated.getPendingContent());
-        verify(commentRepository, times(1)).save(existing);
+        verify(commentRepository, times(1)).update(existing);
     }
 
     @Test
@@ -104,7 +104,7 @@ class CommentServiceImplTest {
         
         assertEquals(newContent, updated.getContent());
         assertNull(updated.getPendingContent());
-        verify(commentRepository, times(1)).save(existing);
+        verify(commentRepository, times(1)).update(existing);
     }
 
     @Test

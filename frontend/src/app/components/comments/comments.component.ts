@@ -37,6 +37,7 @@ export class CommentsComponent {
   });
 
   isSubmitting = signal(false);
+  submitSuccess = signal(false); // New signal for inline success message
 
   // Editing state
   editingCommentId = signal<string | null>(null);
@@ -59,6 +60,7 @@ export class CommentsComponent {
       this.commentService.addComment(newComment).subscribe({
         next: (createdComment) => {
           this.isSubmitting.set(false);
+          this.submitSuccess.set(true); // Show success message
 
           // Save deletion token to localStorage
           if (createdComment.deletionToken) {
@@ -71,6 +73,11 @@ export class CommentsComponent {
 
           this.toastService.show(msg, 'success');
           this.commentForm.reset();
+
+          // Hide success message after 5 seconds
+          setTimeout(() => {
+            this.submitSuccess.set(false);
+          }, 5000);
 
           // Refresh comments list to show the new one (if approved) or just to be safe
           this.refreshComments();
@@ -174,46 +181,49 @@ export class CommentsComponent {
     this.isModalProcessing.set(true);
     this.modalError.set('');
 
+    // Update label to indicate processing
+    if (this.themeService.language() === 'es') {
+      this.modalActionLabel.set(this.modalType() === 'save' ? 'Guardando...' : 'Eliminando...');
+    } else {
+      this.modalActionLabel.set(this.modalType() === 'save' ? 'Saving...' : 'Deleting...');
+    }
+
     if (this.modalType() === 'save') {
       const newContent = this.editContentControl.value!;
       this.commentService.updateComment(id, newContent, token).subscribe({
         next: () => {
           this.isModalProcessing.set(false);
-                this.editingCommentId.set(null);
-                this.closeModal();
-                this.refreshComments();
-
-                // Show success message (Edit pending)
-                const msg = this.themeService.language() === 'es'
-                  ? 'Tu edición ha sido enviada y está pendiente de aprobación.'
-                  : 'Your edit has been submitted for approval.';
-                this.toastService.show(msg, 'success');
-              },
-              error: (err) => {
-          console.error(err);
+          this.editingCommentId.set(null);
+          this.closeModal();
+          this.refreshComments();
+          this.toastService.show(
+            this.themeService.language() === 'es' ? 'Comentario actualizado correctamente' : 'Comment updated successfully',
+            'success'
+          );
+        },
+        error: () => {
           this.isModalProcessing.set(false);
           this.modalError.set(this.themeService.language() === 'es'
-            ? 'Error al actualizar. Intenta de nuevo.'
+            ? 'Error al actualizar. Intenta nuevamente.'
             : 'Error updating. Please try again.');
         }
       });
-    } else if (this.modalType() === 'delete') {
+    } else {
       this.commentService.deleteComment(id, token).subscribe({
         next: () => {
           this.isModalProcessing.set(false);
           this.closeModal();
           this.refreshComments();
           this.toastService.show(
-            this.themeService.language() === 'es' ? 'Comentario eliminado correctamente.' : 'Comment deleted successfully.',
+            this.themeService.language() === 'es' ? 'Comentario eliminado correctamente' : 'Comment deleted successfully',
             'success'
           );
         },
-        error: (err) => {
-          console.error(err);
+        error: () => {
           this.isModalProcessing.set(false);
           this.modalError.set(this.themeService.language() === 'es'
-            ? 'Error al eliminar. Puede que ya no exista.'
-            : 'Error deleting. It may not exist.');
+            ? 'Error al eliminar. Intenta nuevamente.'
+            : 'Error deleting. Please try again.');
         }
       });
     }

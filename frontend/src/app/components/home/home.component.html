@@ -3,25 +3,57 @@
     <app-hero></app-hero>
   </section>
 
-  <section id="experiencia" class="section scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl">
-    <app-experience></app-experience>
-  </section>
+  @defer (on viewport; prefetch on idle) {
+    <section id="experiencia" class="section scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl">
+      <app-experience></app-experience>
+    </section>
+  } @placeholder {
+    <div class="h-96 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
+  }
 
-  <section id="educacion" class="section scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl">
-    <app-education></app-education>
-  </section>
+  @defer (on viewport; prefetch on idle) {
+    <section id="educacion" class="section scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl">
+      <app-education></app-education>
+    </section>
+  } @placeholder {
+    <div class="h-64 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
+  }
 
-  <app-languages />
+  @defer (on viewport; prefetch on idle) {
+    <app-languages />
+  } @placeholder {
+    <div class="h-48 w-full animate-pulse bg-neutral-900/10 rounded-xl my-8"></div>
+  }
 
-  <app-skills />
+  @defer (on viewport; prefetch on idle) {
+    <app-skills />
+  } @placeholder {
+    <div class="h-64 w-full animate-pulse bg-neutral-900/10 rounded-xl my-8"></div>
+  }
 
-  <section id="recursos" class="section scroll-m-20 w-full mx-auto container lg:max-w-6xl md:max-w-4xl pb-32">
-    <app-api-cards></app-api-cards>
-  </section>
+  @defer (on viewport) {
+    <section id="recursos" class="section scroll-m-20 w-full mx-auto container lg:max-w-6xl md:max-w-4xl pb-32">
+      <app-api-cards></app-api-cards>
+    </section>
+  } @placeholder {
+    <div class="h-96 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
+  }
 
-  <app-comments />
+  @defer (on viewport) {
+    <app-comments />
+  } @placeholder {
+    <div class="h-64 w-full animate-pulse bg-neutral-900/10 rounded-xl my-8"></div>
+  }
 
-  <app-contact />
+  @defer (on viewport) {
+    <app-contact />
+  } @placeholder {
+     <div class="h-96 w-full animate-pulse bg-neutral-900/10 rounded-xl"></div>
+  }
 
-  <app-footer />
+  @defer (on viewport) {
+    <app-footer />
+  } @placeholder {
+    <div class="h-24 w-full animate-pulse bg-neutral-900/10 rounded-t-xl"></div>
+  }
 </main>

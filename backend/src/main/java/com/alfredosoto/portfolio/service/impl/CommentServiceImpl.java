@@ -49,7 +49,12 @@ public class CommentServiceImpl implements CommentService {
                 comment.setPendingContent(null);
             }
             comment.setApproved(true);
-            commentRepository.save(comment);
+            try {
+                commentRepository.update(comment);
+            } catch (Exception e) {
+                // If update fails (e.g. item deleted concurrently), treat as not found
+                return null;
+            }
             return comment;
         }
         return null;
@@ -66,10 +71,14 @@ public class CommentServiceImpl implements CommentService {
                 // If not approved yet, just update content directly
                 comment.setContent(content);
             }
-            commentRepository.save(comment);
+            try {
+                commentRepository.update(comment);
+            } catch (Exception e) {
+                throw new IllegalStateException("Comment was deleted or modified concurrently");
+            }
             return comment;
         } else {
-            throw new RuntimeException("Invalid token or comment not found");
+            throw new IllegalStateException("Invalid token or comment not found");
         }
     }
 
@@ -84,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
             if (comment != null && token.equals(comment.getDeletionToken())) {
                 commentRepository.delete(id);
             } else {
-                throw new RuntimeException("Invalid deletion token");
+                throw new IllegalStateException("Invalid deletion token");
             }
         }
     }

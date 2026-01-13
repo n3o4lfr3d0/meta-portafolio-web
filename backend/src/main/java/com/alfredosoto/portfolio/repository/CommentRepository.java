@@ -4,6 +4,7 @@ import com.alfredosoto.portfolio.entity.CommentEntity;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Expression;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 import java.util.List;
@@ -24,6 +25,13 @@ public class CommentRepository {
 
     public void save(CommentEntity comment) {
         commentTable.putItem(comment);
+    }
+
+    public void update(CommentEntity comment) {
+        commentTable.putItem(r -> r.item(comment)
+                .conditionExpression(Expression.builder()
+                        .expression("attribute_exists(id)")
+                        .build()));
     }
 
     public CommentEntity findById(String id) {

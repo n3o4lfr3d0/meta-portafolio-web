@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService } from '../../../services/auth.service';
@@ -24,6 +25,7 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       imports: [LoginComponent, FormsModule],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ThemeService, useValue: themeServiceMock }
       ]
