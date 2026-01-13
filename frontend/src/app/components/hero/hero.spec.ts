@@ -56,7 +56,7 @@ describe('HeroComponent', () => {
   });
 
   it('should have correct CV download URL', () => {
-    expect(component.cvUrl()).toContain('/profile/cv?lang=es');
+    expect(component.cvUrl()).toContain('/cv/alfredo_soto_cv_es.pdf');
   });
 });
 

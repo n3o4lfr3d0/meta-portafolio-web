@@ -21,5 +21,8 @@ export class HeroComponent {
       switchMap(lang => this.profileService.getProfile(lang))
     )
   );
-  cvUrl = computed(() => `${environment.apiUrl}/profile/cv?lang=${this.themeService.language()}`);
+  cvUrl = computed(() => this.themeService.language() === 'es' 
+    ? '/cv/alfredo_soto_cv_es.pdf' 
+    : '/cv/alfredo_soto_cv_en.pdf'
+  );
 }
