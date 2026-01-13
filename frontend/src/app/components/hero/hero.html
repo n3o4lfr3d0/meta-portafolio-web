@@ -30,6 +30,37 @@
         </span>
       </div>
     </a>
+
+    <!-- Repo Promo -->
+    <a
+      id="repo-promo-link"
+      href="https://github.com/n3o4lfr3d0/meta-portafolio-web"
+      target="_blank"
+      rel="noopener"
+      class="flex items-center transition md:justify-center md:hover:scale-105 group relative"
+    >
+      <div class="flex items-center">
+        <span class="relative inline-flex overflow-hidden rounded-full p-[1px]">
+          <span class="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]"></span>
+          <div class="inline-flex items-center justify-center w-full px-3 py-1 text-sm text-purple-800 bg-purple-100 rounded-full cursor-pointer dark:bg-gray-800 dark:text-purple-300 backdrop-blur-3xl whitespace-nowrap gap-2">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+            </svg>
+            {{ themeService.language() === 'es' ? 'Apóyanos con una ⭐' : 'Star on GitHub' }}
+          </div>
+        </span>
+      </div>
+
+      <!-- Arrow Animation & Engagement Text (Only visible on larger screens to avoid clutter) -->
+      <div class="absolute left-full ml-3 flex items-center hidden md:flex animate-fade-in">
+        <svg class="w-12 h-12 text-yellow-500 animate-bounce-horizontal" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" style="transform: rotate(180deg);">
+           <path d="M20,50 L80,50 M60,30 L80,50 L60,70" />
+        </svg>
+        <span class="text-xs text-muted-custom max-w-[150px] leading-tight ml-2 font-medium">
+            {{ themeService.language() === 'es' ? '¿Te gusta? ¡Apóyame con una estrella!' : 'Like it? Support me with a star!' }}
+        </span>
+      </div>
+    </a>
   </div>
 
   <h1
@@ -46,8 +77,8 @@
 
   <nav class="flex gap-4 mt-8 flex-wrap items-center">
     <!-- CV Download Button -->
-    <a 
-      [href]="cvUrl()" 
+    <a
+      [href]="cvUrl()"
       class="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold text-black bg-yellow-500 rounded-full hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_15px_rgba(234,179,8,0.3)]"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>

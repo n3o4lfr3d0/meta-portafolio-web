@@ -12,12 +12,13 @@ import { ThemeService } from '../../../services/theme.service';
 export class LoginComponent implements OnInit {
   authService = inject(AuthService);
   themeService = inject(ThemeService);
+  username = signal('');
   password = signal('');
   showPassword = signal(false);
   error = signal('');
 
   ngOnInit() {
-    this.themeService.toggleTheme('light');
+    this.themeService.toggleTheme('matrix');
   }
 
   togglePassword() {
@@ -25,8 +26,8 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.authService.login(this.password()).subscribe({
-      error: () => this.error.set('Invalid credentials')
+    this.authService.login(this.username(), this.password()).subscribe({
+      error: () => this.error.set('Credenciales inválidas')
     });
   }
 }

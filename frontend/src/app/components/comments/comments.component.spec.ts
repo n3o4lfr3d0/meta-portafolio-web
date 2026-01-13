@@ -4,28 +4,35 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CommentsComponent } from './comments.component';
 import { CommentService } from '../../services/comment.service';
 import { ToastService } from '../../services/toast.service';
+import { ThemeService } from '../../services/theme.service';
 
 describe('CommentsComponent', () => {
   let component: CommentsComponent;
   let fixture: ComponentFixture<CommentsComponent>;
   let commentServiceMock: any;
   let toastServiceMock: any;
+  let themeServiceMock: any;
 
   beforeEach(async () => {
     commentServiceMock = {
       getApprovedComments: vi.fn().mockReturnValue(of([])),
-      addComment: vi.fn().mockReturnValue(of({}))
+      addComment: vi.fn().mockReturnValue(of({ deletionToken: 'abc' }))
     };
 
     toastServiceMock = {
       show: vi.fn()
     };
 
+    themeServiceMock = {
+      language: vi.fn().mockReturnValue('es')
+    };
+
     await TestBed.configureTestingModule({
       imports: [CommentsComponent],
       providers: [
         { provide: CommentService, useValue: commentServiceMock },
-        { provide: ToastService, useValue: toastServiceMock }
+        { provide: ToastService, useValue: toastServiceMock },
+        { provide: ThemeService, useValue: themeServiceMock }
       ]
     }).compileComponents();
 

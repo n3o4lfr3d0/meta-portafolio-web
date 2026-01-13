@@ -2,6 +2,7 @@ package com.alfredosoto.portfolio.controller;
 
 import com.alfredosoto.portfolio.dto.ExperienceDTO;
 import com.alfredosoto.portfolio.service.ExperienceService;
+import com.alfredosoto.portfolio.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,6 +22,9 @@ class ExperienceControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtService jwtService;
 
     @MockBean
     private ExperienceService experienceService;

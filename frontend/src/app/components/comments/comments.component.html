@@ -5,7 +5,7 @@
     </h2>
 
     <!-- Formulario -->
-    <div class="bg-card-custom p-6 rounded-xl border border-card-custom shadow-lg">
+    <div id="comment-form" class="bg-card-custom p-6 rounded-xl border border-card-custom shadow-lg">
       <h3 class="text-xl font-bold mb-4 text-default">{{ themeService.language() === 'es' ? 'Deja un comentario' : 'Leave a comment' }}</h3>
 
       <form [formGroup]="commentForm" (ngSubmit)="onSubmit()" class="space-y-4">

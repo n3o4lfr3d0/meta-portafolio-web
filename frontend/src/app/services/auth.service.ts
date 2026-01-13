@@ -12,8 +12,8 @@ export class AuthService {
 
   isAuthenticated = signal<boolean>(!!localStorage.getItem('admin_token'));
 
-  login(password: string) {
-    return this.http.post<{token: string}>(`${environment.apiUrl}/auth/login`, { password }).pipe(
+  login(username: string, password: string) {
+    return this.http.post<{token: string}>(`${environment.apiUrl}/auth/login`, { username, password }).pipe(
       tap(res => {
         localStorage.setItem('admin_token', res.token);
         this.isAuthenticated.set(true);

@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   comments = signal<Comment[]>([]);
 
   ngOnInit() {
-    this.themeService.toggleTheme('light');
+    this.themeService.toggleTheme('matrix');
     this.loadComments();
   }
 
@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
   }
 
   delete(id: string) {
-    if (confirm('Are you sure you want to delete this comment?')) {
+    if (confirm('¿Estás seguro de que quieres eliminar este comentario?')) {
       this.commentService.deleteComment(id).subscribe(() => this.loadComments());
     }
   }

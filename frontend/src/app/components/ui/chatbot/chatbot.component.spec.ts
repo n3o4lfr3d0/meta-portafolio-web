@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ChatService } from '../../../services/chat.service';
@@ -12,6 +13,7 @@ describe('ChatbotComponent', () => {
   let fixture: ComponentFixture<ChatbotComponent>;
   let themeServiceMock: any;
   let chatServiceMock: any;
+  let routerMock: any;
 
   beforeEach(async () => {
     themeServiceMock = {
@@ -23,11 +25,16 @@ describe('ChatbotComponent', () => {
         sendMessage: vi.fn().mockReturnValue(of({ response: 'Bot response' }))
     };
 
+    routerMock = {
+        url: '/home'
+    };
+
     await TestBed.configureTestingModule({
       imports: [ChatbotComponent],
       providers: [
         { provide: ThemeService, useValue: themeServiceMock },
-        { provide: ChatService, useValue: chatServiceMock }
+        { provide: ChatService, useValue: chatServiceMock },
+        { provide: Router, useValue: routerMock }
       ]
     }).compileComponents();
 
@@ -86,7 +93,7 @@ describe('ChatbotComponent', () => {
     const lastMsg = messages.at(-1);
     expect(lastMsg?.text).toBe('Bot response');
     expect(lastMsg?.sender).toBe('bot');
-    expect(chatServiceMock.sendMessage).toHaveBeenCalledWith('Hello', 'es');
+    expect(chatServiceMock.sendMessage).toHaveBeenCalledWith('Hello', 'es', 'home');
   });
 
   it('should render markdown table correctly', () => {

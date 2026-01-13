@@ -2,6 +2,7 @@ package com.alfredosoto.portfolio.controller;
 
 import com.alfredosoto.portfolio.entity.CommentEntity;
 import com.alfredosoto.portfolio.service.CommentService;
+import com.alfredosoto.portfolio.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ class CommentControllerTest {
 
     @MockBean
     private CommentService commentService;
+
+    @MockBean
+    private JwtService jwtService;
 
     @Autowired
     private ObjectMapper objectMapper;

@@ -19,7 +19,7 @@ public class ChatController {
 
     @PostMapping("/ask")
     public ResponseEntity<ChatResponse> ask(@RequestBody ChatRequest request) {
-        String response = chatService.processMessage(request.getMessage(), request.getLanguage());
+        String response = chatService.processMessage(request);
         return ResponseEntity.ok(new ChatResponse(response));
     }
 }

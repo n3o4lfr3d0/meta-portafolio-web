@@ -2,6 +2,7 @@ package com.alfredosoto.portfolio.controller;
 
 import com.alfredosoto.portfolio.dto.DailyContentDTO;
 import com.alfredosoto.portfolio.service.DailyContentService;
+import com.alfredosoto.portfolio.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,6 +19,9 @@ class DailyContentControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtService jwtService;
 
     @MockBean
     private DailyContentService dailyContentService;

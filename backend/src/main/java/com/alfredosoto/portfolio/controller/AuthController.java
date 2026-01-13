@@ -2,7 +2,7 @@ package com.alfredosoto.portfolio.controller;
 
 import com.alfredosoto.portfolio.dto.LoginRequest;
 import com.alfredosoto.portfolio.dto.LoginResponse;
-import org.springframework.beans.factory.annotation.Value;
+import com.alfredosoto.portfolio.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,17 +11,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Value("${admin.password:admin123}")
-    private String adminPassword;
+    private final AuthService authService;
 
-    @Value("${admin.token:secret-admin-token-2026}")
-    private String adminToken;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        if (adminPassword.equals(request.getPassword())) {
-            return ResponseEntity.ok(new LoginResponse(adminToken));
+        try {
+            // Default to "admin" if username is missing (backward compatibility/simple UI)
+            if (request.getUsername() == null || request.getUsername().isEmpty()) {
+                request.setUsername("admin");
+            }
+            LoginResponse response = authService.login(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }

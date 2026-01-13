@@ -38,9 +38,13 @@ public class DataSeeder {
                                       SkillRepository skillRepo,
                                       EducationRepository educationRepo,
                                       com.alfredosoto.portfolio.repository.LanguageRepository languageRepo,
-                                      ProjectInfoRepository projectInfoRepo) {
+                                      ProjectInfoRepository projectInfoRepo,
+                                      com.alfredosoto.portfolio.service.AuthService authService) {
         return args -> {
             logger.info("Verificando datos iniciales en DynamoDB...");
+
+            // 0. Seed Admin User
+            authService.createAdminUserIfNotFound();
 
             // 1. Poblar Perfil (ES y EN)
             seedProfile(profileRepo, "es");

@@ -7,7 +7,7 @@ import { ThemeService } from '../../../services/theme.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end animate-fade-in">
+    <div id="theme-switcher-container" class="fixed top-6 right-6 z-50 flex flex-col gap-4 items-end animate-fade-in">
       <!-- Dynamic Title -->
       <div [class]="titleClasses()">
         {{ titleText() }}

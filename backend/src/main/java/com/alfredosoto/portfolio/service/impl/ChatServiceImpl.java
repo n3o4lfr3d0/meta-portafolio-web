@@ -57,7 +57,11 @@ public class ChatServiceImpl implements ChatService {
         "- Security: Spring Security (JWT) - if implemented.\n";
 
     @Override
-    public String processMessage(String userMessage, String language) {
+    public String processMessage(ChatRequest request) {
+        String userMessage = request.getMessage();
+        String language = request.getLanguage();
+        String contextPage = request.getContextPage();
+
         // 0. Pre-check for Language Mismatch (Heuristic to save API quota and ensure fast response)
         String mismatchResponse = checkLanguageMismatch(userMessage, language);
         if (mismatchResponse != null) {
@@ -70,7 +74,8 @@ public class ChatServiceImpl implements ChatService {
         // 2. Build Prompt
         String systemPrompt = "You are Alfredo Soto's AI Assistant for his portfolio.\n" +
                 "Current Date/Time: " + java.time.LocalDateTime.now() + ".\n" +
-                "Current Language Mode: " + language + ".\n\n" +
+                "Current Language Mode: " + language + ".\n" +
+                "User is currently viewing page: " + (contextPage != null ? contextPage : "unknown") + ".\n\n" +
                 "*** CRITICAL LANGUAGE ENFORCEMENT ***\n" +
                 "1. CHECK the language of the USER QUESTION.\n" +
                 "2. If the user writes in a language DIFFERENT from the Current Language Mode (" + language + "):\n" +

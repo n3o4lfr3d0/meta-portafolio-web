@@ -1,11 +1,11 @@
-import { TestBed } from '@angular/core/testing';
-import { AuthService } from './auth.service';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { environment } from '../../environments/environment';
 import { ADMIN_ROUTE } from '../config/admin.config';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -43,19 +43,21 @@ describe('AuthService', () => {
 
   it('should login successfully', () => {
     const mockResponse = { token: 'abc-123' };
+    const username = 'admin';
     const password = 'secret';
 
-    service.login(password).subscribe(res => {
+    service.login(username, password).subscribe(res => {
       expect(res).toEqual(mockResponse);
-      expect(localStorage.getItem('admin_token')).toBe('abc-123');
-      expect(service.isAuthenticated()).toBe(true);
-      expect(routerSpy.navigate).toHaveBeenCalledWith([`/${ADMIN_ROUTE}`]);
     });
 
     const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ password });
+    expect(req.request.body).toEqual({ username, password });
     req.flush(mockResponse);
+
+    expect(localStorage.getItem('admin_token')).toBe('abc-123');
+    expect(service.isAuthenticated()).toBe(true);
+    expect(routerSpy.navigate).toHaveBeenCalledWith([`/${ADMIN_ROUTE}`]);
   });
 
   it('should logout successfully', () => {
@@ -71,7 +73,7 @@ describe('AuthService', () => {
 
   it('should initialize as authenticated if token exists', () => {
     localStorage.setItem('admin_token', 'existing-token');
-    
+
     // Reset testing module to force re-initialization of the service
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -83,7 +85,7 @@ describe('AuthService', () => {
       ]
     });
     const freshService = TestBed.inject(AuthService);
-    
+
     expect(freshService.isAuthenticated()).toBe(true);
   });
 });

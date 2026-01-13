@@ -23,7 +23,7 @@ export class CommentsComponent {
 
   @ViewChild(ConfirmationModalComponent) confirmationModal!: ConfirmationModalComponent;
 
-  private refreshTrigger = new BehaviorSubject<void>(undefined);
+  private readonly refreshTrigger = new BehaviorSubject<void>(undefined);
   comments = toSignal(
     this.refreshTrigger.pipe(
       switchMap(() => this.commentService.getApprovedComments())

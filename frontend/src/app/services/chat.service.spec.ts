@@ -1,7 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { ChatService } from './chat.service';
 
@@ -14,8 +13,7 @@ describe('ChatService', () => {
       providers: [
         ChatService,
         provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: Router }
+        provideHttpClientTesting()
       ]
     });
     service = TestBed.inject(ChatService);
@@ -34,14 +32,15 @@ describe('ChatService', () => {
     const dummyResponse = { response: 'Hello from Bot' };
     const userMessage = 'Hi';
     const language = 'en';
+    const contextPage = 'home';
 
-    service.sendMessage(userMessage, language).subscribe(res => {
+    service.sendMessage(userMessage, language, contextPage).subscribe(res => {
       expect(res).toEqual(dummyResponse);
     });
 
     const req = httpMock.expectOne(`${environment.apiUrl}/chat/ask`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ message: userMessage, language });
+    expect(req.request.body).toEqual({ message: userMessage, language, contextPage });
 
     req.flush(dummyResponse);
   });

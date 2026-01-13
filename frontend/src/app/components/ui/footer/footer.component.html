@@ -1,0 +1,10 @@
+<footer class="footer footer-center p-10 bg-base-200 text-base-content rounded">
+  <aside class="flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-center w-full">
+    <p class="font-medium text-center md:text-left">
+        {{ themeService.language() === 'es' ? 'Hecho con pasión en tan sólo un fin de semana por' : 'Made with passion in just one weekend by' }}
+        <span (dblclick)="accessAdmin($event)" class="cursor-default select-none hover:text-primary transition-colors font-bold" title="Alfredo Soto">Alfredo Soto</span>
+    </p>
+    <span class="hidden md:inline-block text-base-content/30">|</span>
+    <p class="text-xs md:text-sm opacity-70">Copyright © {{ year }}</p>
+  </aside>
+</footer>

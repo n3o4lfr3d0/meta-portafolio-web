@@ -3,6 +3,7 @@ package com.alfredosoto.portfolio.dto;
 public class ChatRequest {
     private String message;
     private String language; // "es" or "en"
+    private String contextPage; // e.g., "home", "experience", "contact"
 
     public String getMessage() {
         return message;
@@ -18,5 +19,13 @@ public class ChatRequest {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getContextPage() {
+        return contextPage;
+    }
+
+    public void setContextPage(String contextPage) {
+        this.contextPage = contextPage;
     }
 }

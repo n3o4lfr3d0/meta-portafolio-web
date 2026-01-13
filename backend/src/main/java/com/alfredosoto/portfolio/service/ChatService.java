@@ -1,5 +1,7 @@
 package com.alfredosoto.portfolio.service;
 
+import com.alfredosoto.portfolio.dto.ChatRequest;
+
 public interface ChatService {
-    String processMessage(String message, String language);
+    String processMessage(ChatRequest request);
 }

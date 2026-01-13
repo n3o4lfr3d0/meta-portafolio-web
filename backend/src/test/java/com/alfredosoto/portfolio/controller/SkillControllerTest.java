@@ -2,6 +2,7 @@ package com.alfredosoto.portfolio.controller;
 
 import com.alfredosoto.portfolio.dto.SkillDTO;
 import com.alfredosoto.portfolio.service.SkillService;
+import com.alfredosoto.portfolio.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +25,9 @@ class SkillControllerTest {
 
     @MockBean
     private SkillService skillService;
+
+    @MockBean
+    private JwtService jwtService;
 
     @Test
     void shouldReturnAllSkills() throws Exception {

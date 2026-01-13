@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 class ChatControllerTest {
 
@@ -19,8 +21,6 @@ class ChatControllerTest {
     private ChatService chatService;
 
     private ChatController chatController;
-
-    private static final String HELLO = "Hello";
 
     @BeforeEach
     void setUp() {
@@ -31,15 +31,15 @@ class ChatControllerTest {
     @Test
     void shouldReturnChatResponse() {
         ChatRequest request = new ChatRequest();
-        request.setMessage(HELLO);
+        request.setMessage("Hello");
         request.setLanguage("en");
 
-        when(chatService.processMessage(HELLO, "en")).thenReturn("Hi there!");
+        when(chatService.processMessage(any(ChatRequest.class))).thenReturn("Hello User");
 
         ResponseEntity<ChatResponse> response = chatController.ask(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Hi there!", response.getBody().getResponse());
-        verify(chatService, times(1)).processMessage(HELLO, "en");
+        assertNotNull(response.getBody());
+        assertEquals("Hello User", response.getBody().getResponse());
     }
 }

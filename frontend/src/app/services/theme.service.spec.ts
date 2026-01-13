@@ -5,9 +5,11 @@ import { ThemeService } from './theme.service';
 describe('ThemeService', () => {
   let service: ThemeService;
   let mockLocalStorage: any;
+  let originalNavigator: any;
 
   beforeEach(() => {
     mockLocalStorage = {};
+    originalNavigator = globalThis.navigator;
 
     // Mock localStorage
     Object.defineProperty(globalThis, 'localStorage', {
@@ -26,7 +28,28 @@ describe('ThemeService', () => {
       writable: true
     });
 
+    // Mock navigator to 'es' by default to preserve original test behavior
+    Object.defineProperty(globalThis, 'navigator', {
+        value: {
+            language: 'es-ES',
+            userAgent: 'test'
+        },
+        writable: true,
+        configurable: true
+    });
+
     TestBed.configureTestingModule({});
+  });
+
+  afterEach(() => {
+    // Restore navigator
+    if (originalNavigator) {
+        Object.defineProperty(globalThis, 'navigator', {
+            value: originalNavigator,
+            writable: true,
+            configurable: true
+        });
+    }
   });
 
   it('should be created', () => {
@@ -64,6 +87,21 @@ describe('ThemeService', () => {
 
   it('should initialize with stored theme', () => {
     mockLocalStorage['portfolio-theme'] = 'light';
+    service = TestBed.inject(ThemeService);
+    expect(service.theme()).toBe('light');
+  });
+
+  it('should detect English browser language and default to light theme', () => {
+    // Mock navigator.language to English
+    Object.defineProperty(globalThis, 'navigator', {
+      value: {
+        language: 'en-US',
+        userAgent: 'test'
+      },
+      writable: true,
+      configurable: true
+    });
+
     service = TestBed.inject(ThemeService);
     expect(service.theme()).toBe('light');
   });

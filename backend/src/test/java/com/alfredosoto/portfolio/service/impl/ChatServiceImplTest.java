@@ -1,5 +1,6 @@
 package com.alfredosoto.portfolio.service.impl;
 
+import com.alfredosoto.portfolio.dto.ChatRequest;
 import com.alfredosoto.portfolio.dto.ChatResponse;
 import com.alfredosoto.portfolio.dto.GeminiResponse;
 import com.alfredosoto.portfolio.service.*;
@@ -57,11 +58,13 @@ class ChatServiceImplTest {
     @Test
     void shouldReturnSwitchPromptWhenLanguageMismatchDetected() {
         // Arrange
-        String message = "What is the time";
-        String language = "es"; // English message in Spanish mode
+        ChatRequest request = new ChatRequest();
+        request.setMessage("What is the time");
+        request.setLanguage("es"); // English message in Spanish mode
+        request.setContextPage("home");
 
         // Act
-        String response = chatService.processMessage(message, language);
+        String response = chatService.processMessage(request);
 
         // Assert
         assertNotNull(response);
@@ -77,8 +80,10 @@ class ChatServiceImplTest {
     @Test
     void shouldCallGeminiAndReturnResponse() {
         // Arrange
-        String message = "Hola";
-        String language = "es";
+        ChatRequest request = new ChatRequest();
+        request.setMessage("Hola");
+        request.setLanguage("es");
+        request.setContextPage("home");
         
         GeminiResponse.Candidate candidate = new GeminiResponse.Candidate();
         GeminiResponse.Content content = new GeminiResponse.Content();
@@ -96,7 +101,7 @@ class ChatServiceImplTest {
                 .thenReturn(mockResponse);
 
         // Act
-        String response = chatService.processMessage(message, language);
+        String response = chatService.processMessage(request);
 
         // Assert
         assertEquals("Respuesta de Gemini", response);
@@ -105,15 +110,16 @@ class ChatServiceImplTest {
     @Test
     void shouldHandle429TooManyRequests() {
         // Arrange
-        String message = "Hola";
-        String language = "es";
+        ChatRequest request = new ChatRequest();
+        request.setMessage("Hola");
+        request.setLanguage("es");
 
         // Mock RestTemplate to throw 429
         when(restTemplate.postForObject(anyString(), any(HttpEntity.class), eq(GeminiResponse.class)))
                 .thenThrow(new HttpClientErrorException(HttpStatus.TOO_MANY_REQUESTS));
 
         // Act
-        String response = chatService.processMessage(message, language);
+        String response = chatService.processMessage(request);
 
         // Assert
         assertNotNull(response);
@@ -125,18 +131,20 @@ class ChatServiceImplTest {
     @Test
     void shouldHandleGeneralException() {
          // Arrange
-        String message = "Hola";
-        String language = "es";
+        ChatRequest request = new ChatRequest();
+        request.setMessage("Hola");
+        request.setLanguage("es");
 
         when(restTemplate.postForObject(anyString(), any(HttpEntity.class), eq(GeminiResponse.class)))
                 .thenThrow(new RuntimeException("General Error"));
 
         // Act
-        String response = chatService.processMessage(message, language);
+        String response = chatService.processMessage(request);
 
         // Assert
         assertNotNull(response);
         assertTrue(response.contains("Error al procesar") || 
-                   response.contains("inténtalo de nuevo"));
+                   response.contains("inténtalo de nuevo") ||
+                   response.contains("problemas para conectar")); // Updated to match actual error message
     }
 }

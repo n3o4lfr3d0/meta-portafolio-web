@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { ChatService } from '../../../services/chat.service';
 import { ThemeService } from '../../../services/theme.service';
 
@@ -24,6 +25,7 @@ export class ChatbotComponent {
   themeService = inject(ThemeService);
   chatService = inject(ChatService);
   sanitizer = inject(DomSanitizer);
+  router = inject(Router);
 
   isOpen = signal(false);
   messages = signal<ChatMessage[]>([]);
@@ -111,7 +113,8 @@ export class ChatbotComponent {
     this.isLoading.set(true);
 
     // Call Backend API
-    this.chatService.sendMessage(text, this.themeService.language()).subscribe({
+    const contextPage = this.router.url.replace('/', '') || 'home';
+    this.chatService.sendMessage(text, this.themeService.language(), contextPage).subscribe({
       next: (res) => {
         this.addBotMessage(res.response);
         this.isLoading.set(false);

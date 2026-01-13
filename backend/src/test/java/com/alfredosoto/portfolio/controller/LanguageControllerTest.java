@@ -1,6 +1,7 @@
 package com.alfredosoto.portfolio.controller;
 
 import com.alfredosoto.portfolio.entity.LanguageEntity;
+import com.alfredosoto.portfolio.service.JwtService;
 import com.alfredosoto.portfolio.service.LanguageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ class LanguageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtService jwtService;
 
     @MockBean
     private LanguageService languageService;

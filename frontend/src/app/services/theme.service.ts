@@ -14,7 +14,7 @@ export class ThemeService {
       const currentTheme = this.theme();
       localStorage.setItem('portfolio-theme', currentTheme);
       this.applyTheme(currentTheme);
-      
+
       // Update language based on theme
       this.language.set(currentTheme === 'matrix' ? 'es' : 'en');
     });
@@ -26,7 +26,15 @@ export class ThemeService {
 
   private getInitialTheme(): Theme {
     const saved = localStorage.getItem('portfolio-theme') as Theme;
-    return saved || 'matrix'; // Por defecto Matrix
+    if (saved) return saved;
+
+    // Detect browser language if no theme is saved
+    const browserLang = navigator.language || (navigator as any).userLanguage;
+    if (browserLang?.startsWith('en')) {
+      return 'light';
+    }
+
+    return 'matrix'; // Default to Matrix (Spanish)
   }
 
   private applyTheme(theme: Theme) {
