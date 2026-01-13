@@ -59,8 +59,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     // If we have critical elements and (all elements OR we've waited enough), start tour
     if (isFullPageLikelyReady || (areCriticalElementsReady && attempts > 10)) {
-      // Give a tiny extra buffer for layout stability
-      setTimeout(() => this.tourService.startTour(), 100);
+      // Add a small delay to ensure layout stability
+      setTimeout(() => {
+        this.tourService.startTour();
+      }, 500);
     } else if (attempts < 30) { // Wait up to 15 seconds (30 * 500ms)
       setTimeout(() => this.waitForElementsAndStartTour(attempts + 1), 500);
     } else {

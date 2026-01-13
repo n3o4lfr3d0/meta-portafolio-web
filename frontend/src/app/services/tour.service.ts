@@ -31,6 +31,7 @@ export class TourService {
     return {
       showProgress: true,
       animate: true,
+      smoothScroll: false,
       doneBtnText: isEs ? 'Listo' : 'Done',
       nextBtnText: isEs ? 'Siguiente' : 'Next',
       prevBtnText: isEs ? 'Anterior' : 'Previous',
