@@ -28,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentEntity> getApprovedComments() {
         return commentRepository.findAll().stream()
+                .filter(c -> !c.isDeleted())
                 .filter(CommentEntity::isApproved)
                 .sorted(Comparator.comparing(CommentEntity::getTimestamp).reversed())
                 .collect(Collectors.toList());
@@ -36,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentEntity> getAllComments() {
         return commentRepository.findAll().stream()
+                .filter(c -> !c.isDeleted())
                 .sorted(Comparator.comparing(CommentEntity::getTimestamp).reversed())
                 .collect(Collectors.toList());
     }

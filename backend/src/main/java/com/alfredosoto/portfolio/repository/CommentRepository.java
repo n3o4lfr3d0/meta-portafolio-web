@@ -48,7 +48,8 @@ public class CommentRepository {
     public void delete(String id) {
         CommentEntity comment = findById(id);
         if (comment != null) {
-            commentTable.deleteItem(comment);
+            comment.setDeleted(true);
+            update(comment);
         }
     }
 }
