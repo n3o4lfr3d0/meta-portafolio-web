@@ -81,4 +81,12 @@ public class CommentEntity {
     public void setPendingContent(String pendingContent) {
         this.pendingContent = pendingContent;
     }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 }
