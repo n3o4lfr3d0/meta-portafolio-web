@@ -76,7 +76,7 @@ public class LanguageRepository {
 
     public void deleteAll() {
         java.util.List<LanguageEntity> batch = new java.util.ArrayList<>();
-        languageTable.scan().items().forEach(item -> {
+        for (LanguageEntity item : languageTable.scan().items()) {
             batch.add(item);
             if (batch.size() == 25) {
                 WriteBatch.Builder<LanguageEntity> writeBatchBuilder = WriteBatch.builder(LanguageEntity.class)
@@ -90,7 +90,7 @@ public class LanguageRepository {
                 enhancedClient.batchWriteItem(batchRequest);
                 batch.clear();
             }
-        });
+        }
         if (!batch.isEmpty()) {
             WriteBatch.Builder<LanguageEntity> writeBatchBuilder = WriteBatch.builder(LanguageEntity.class)
                     .mappedTableResource(languageTable);

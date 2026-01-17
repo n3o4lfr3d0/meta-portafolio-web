@@ -77,7 +77,7 @@ public class ProjectInfoRepository {
 
     public void deleteAll() {
         java.util.List<ProjectInfoEntity> batch = new java.util.ArrayList<>();
-        projectInfoTable.scan().items().forEach(item -> {
+        for (ProjectInfoEntity item : projectInfoTable.scan().items()) {
             batch.add(item);
             if (batch.size() == 25) {
                 WriteBatch.Builder<ProjectInfoEntity> writeBatchBuilder = WriteBatch.builder(ProjectInfoEntity.class)
@@ -91,7 +91,7 @@ public class ProjectInfoRepository {
                 enhancedClient.batchWriteItem(batchRequest);
                 batch.clear();
             }
-        });
+        }
         if (!batch.isEmpty()) {
             WriteBatch.Builder<ProjectInfoEntity> writeBatchBuilder = WriteBatch.builder(ProjectInfoEntity.class)
                     .mappedTableResource(projectInfoTable);
