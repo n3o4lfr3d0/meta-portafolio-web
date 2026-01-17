@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://backend-qa-placeholder.up.railway.app/api',
+  apiUrl: 'https://meta-portafolio-web-quality.up.railway.app/api',
   whatsappNumber: '51977324854'
 };
