@@ -1,6 +1,7 @@
 package com.alfredosoto.portfolio.repository;
 
 import com.alfredosoto.portfolio.entity.ExperienceEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -14,8 +15,8 @@ public class ExperienceRepository {
 
     private final DynamoDbTable<ExperienceEntity> table;
 
-    public ExperienceRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.table = enhancedClient.table("Portfolio_Experience", TableSchema.fromBean(ExperienceEntity.class));
+    public ExperienceRepository(DynamoDbEnhancedClient enhancedClient, @Value("${app.dynamodb.table-suffix}") String tableSuffix) {
+        this.table = enhancedClient.table("Portfolio_Experience" + tableSuffix, TableSchema.fromBean(ExperienceEntity.class));
     }
 
     public void save(ExperienceEntity experience) {

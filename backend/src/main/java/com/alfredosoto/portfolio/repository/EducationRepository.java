@@ -1,6 +1,7 @@
 package com.alfredosoto.portfolio.repository;
 
 import com.alfredosoto.portfolio.entity.EducationEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -14,8 +15,8 @@ public class EducationRepository {
 
     private final DynamoDbTable<EducationEntity> table;
 
-    public EducationRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.table = enhancedClient.table("Portfolio_Education", TableSchema.fromBean(EducationEntity.class));
+    public EducationRepository(DynamoDbEnhancedClient enhancedClient, @Value("${app.dynamodb.table-suffix}") String tableSuffix) {
+        this.table = enhancedClient.table("Portfolio_Education" + tableSuffix, TableSchema.fromBean(EducationEntity.class));
     }
 
     public void save(EducationEntity education) {

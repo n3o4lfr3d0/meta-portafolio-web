@@ -1,6 +1,7 @@
 package com.alfredosoto.portfolio.repository;
 
 import com.alfredosoto.portfolio.entity.ProjectInfoEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -15,8 +16,8 @@ public class ProjectInfoRepository {
 
     private final DynamoDbTable<ProjectInfoEntity> projectInfoTable;
 
-    public ProjectInfoRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.projectInfoTable = enhancedClient.table("ProjectInfo", TableSchema.fromBean(ProjectInfoEntity.class));
+    public ProjectInfoRepository(DynamoDbEnhancedClient enhancedClient, @Value("${app.dynamodb.table-suffix}") String tableSuffix) {
+        this.projectInfoTable = enhancedClient.table("ProjectInfo" + tableSuffix, TableSchema.fromBean(ProjectInfoEntity.class));
         try {
             this.projectInfoTable.createTable();
         } catch (Exception e) {

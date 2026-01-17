@@ -1,6 +1,7 @@
 package com.alfredosoto.portfolio.repository;
 
 import com.alfredosoto.portfolio.entity.LanguageEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -14,8 +15,8 @@ import java.util.stream.Collectors;
 public class LanguageRepository {
     private final DynamoDbTable<LanguageEntity> languageTable;
 
-    public LanguageRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.languageTable = enhancedClient.table("Language", TableSchema.fromBean(LanguageEntity.class));
+    public LanguageRepository(DynamoDbEnhancedClient enhancedClient, @Value("${app.dynamodb.table-suffix}") String tableSuffix) {
+        this.languageTable = enhancedClient.table("Language" + tableSuffix, TableSchema.fromBean(LanguageEntity.class));
         try {
             this.languageTable.createTable();
         } catch (Exception e) {

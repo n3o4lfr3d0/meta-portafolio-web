@@ -1,6 +1,7 @@
 package com.alfredosoto.portfolio.repository;
 
 import com.alfredosoto.portfolio.entity.CommentEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -14,8 +15,8 @@ import java.util.stream.Collectors;
 public class CommentRepository {
     private final DynamoDbTable<CommentEntity> commentTable;
 
-    public CommentRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.commentTable = enhancedClient.table("Comment", TableSchema.fromBean(CommentEntity.class));
+    public CommentRepository(DynamoDbEnhancedClient enhancedClient, @Value("${app.dynamodb.table-suffix}") String tableSuffix) {
+        this.commentTable = enhancedClient.table("Comment" + tableSuffix, TableSchema.fromBean(CommentEntity.class));
         try {
             this.commentTable.createTable();
         } catch (Exception e) {

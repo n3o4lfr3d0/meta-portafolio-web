@@ -1,6 +1,7 @@
 package com.alfredosoto.portfolio.repository;
 
 import com.alfredosoto.portfolio.entity.ContactEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -13,8 +14,8 @@ import java.util.stream.Collectors;
 public class ContactRepository {
     private final DynamoDbTable<ContactEntity> contactTable;
 
-    public ContactRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.contactTable = enhancedClient.table("Contact", TableSchema.fromBean(ContactEntity.class));
+    public ContactRepository(DynamoDbEnhancedClient enhancedClient, @Value("${app.dynamodb.table-suffix}") String tableSuffix) {
+        this.contactTable = enhancedClient.table("Contact" + tableSuffix, TableSchema.fromBean(ContactEntity.class));
         try {
             this.contactTable.createTable();
         } catch (Exception e) {
