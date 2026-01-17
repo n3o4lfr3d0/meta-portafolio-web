@@ -35,6 +35,12 @@ public class DataSeeder {
     private static final String DEVOPS_SKILL = "DevOps";
     private static final String SOFT_SKILLS = "Soft Skills";
 
+    @org.springframework.beans.factory.annotation.Value("${app.dynamodb.table-suffix:}")
+    private String tableSuffix;
+
+    @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:default}")
+    private String activeProfile;
+
     @Bean
     @Order(2)
     @ConditionalOnProperty(name = "app.dataseed.enabled", havingValue = "true", matchIfMissing = true)
@@ -46,7 +52,18 @@ public class DataSeeder {
                                       ProjectInfoRepository projectInfoRepo,
                                       AuthService authService) {
         return args -> {
-            logger.info("Verificando datos iniciales en DynamoDB...");
+            // SAFETY CHECK: Prevent accidental wiping of production tables
+            if ((tableSuffix == null || tableSuffix.trim().isEmpty()) && !"local".equalsIgnoreCase(activeProfile)) {
+                logger.error("🛑 SEGURIDAD: DataSeeder ABORTADO. Se detectó sufijo de tabla vacío en entorno '{}'. Configure DYNAMODB_TABLE_SUFFIX para evitar borrar datos de producción.", activeProfile);
+                return;
+            }
+            
+            if ("prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile)) {
+                logger.info("🔒 DataSeeder omitido en entorno de PRODUCCIÓN.");
+                return;
+            }
+
+            logger.info("Verificando datos iniciales en DynamoDB (Sufijo: '{}')...", tableSuffix);
 
             // 0. Seed Admin User
             authService.createAdminUserIfNotFound();
