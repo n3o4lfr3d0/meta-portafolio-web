@@ -105,7 +105,7 @@ public class DataSeeder {
                 "In charge of providing direct support to Rústica chain stores for the correct use and operation of their software. Reporting errors to the development area. Achievements: Increased efficiency and 15% workload reduction through optimization of service times.",
                 "#", "en"));
 
-            experiences.forEach(experienceRepo::save);
+            experienceRepo.saveAll(experiences);
 
             // 2.5 Poblar Educación (Limpieza total y recarga)
             logger.info("Limpiando tabla Education...");
@@ -127,7 +127,7 @@ public class DataSeeder {
                 "Professional technical training specialized in software development and information systems.",
                 "https://www.cibertec.edu.pe", "en"));
 
-            educationList.forEach(educationRepo::save);
+            educationRepo.saveAll(educationList);
 
             // 3. Poblar Habilidades (Limpieza total y recarga)
             logger.info("Limpiando tabla Skills...");
