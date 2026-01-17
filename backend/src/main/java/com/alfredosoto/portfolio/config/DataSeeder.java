@@ -53,13 +53,23 @@ public class DataSeeder {
                                       AuthService authService) {
         return args -> {
             // SAFETY CHECK: Prevent accidental wiping of production tables
+            // Only block if activeProfile is prod/production AND dataSeedEnabled is NOT explicitly true
+            boolean isProd = "prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile);
+            String dataSeedEnabledProp = System.getProperty("app.dataseed.enabled", System.getenv("DATA_SEED_ENABLED"));
+            boolean explicitEnable = "true".equalsIgnoreCase(dataSeedEnabledProp);
+
             if ((tableSuffix == null || tableSuffix.trim().isEmpty()) && !"local".equalsIgnoreCase(activeProfile)) {
-                logger.error("🛑 SEGURIDAD: DataSeeder ABORTADO. Se detectó sufijo de tabla vacío en entorno '{}'. Configure DYNAMODB_TABLE_SUFFIX para evitar borrar datos de producción.", activeProfile);
-                return;
+                // Allow prod seed ONLY if explicitly enabled
+                if (isProd && explicitEnable) {
+                     logger.warn("⚠️ ALERTA: DataSeeder habilitado explícitamente en PRODUCCIÓN. Se procederá a borrar y recargar datos.");
+                } else {
+                    logger.error("🛑 SEGURIDAD: DataSeeder ABORTADO. Se detectó sufijo de tabla vacío en entorno '{}'. Configure DYNAMODB_TABLE_SUFFIX para evitar borrar datos de producción.", activeProfile);
+                    return;
+                }
             }
             
-            if ("prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile)) {
-                logger.info("🔒 DataSeeder omitido en entorno de PRODUCCIÓN.");
+            if (isProd && !explicitEnable) {
+                logger.info("🔒 DataSeeder omitido en entorno de PRODUCCIÓN (DATA_SEED_ENABLED=false).");
                 return;
             }
 
