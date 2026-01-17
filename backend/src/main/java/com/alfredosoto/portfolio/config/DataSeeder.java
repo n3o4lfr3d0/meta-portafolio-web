@@ -226,7 +226,7 @@ public class DataSeeder {
             skills.add(createSkill("Inteligencia Emocional", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "es"));
             skills.add(createSkill("Emotional Intelligence", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "en"));
             
-            skillRepo.saveAll(skills);
+            skills.forEach(skillRepo::save);
 
             // 4. Poblar Idiomas
             logger.info("Limpiando tabla Language...");
@@ -243,7 +243,7 @@ public class DataSeeder {
             languages.add(createLanguage("English", "Intermediate (B1/B2)", "en", 60, "en"));
             languages.add(createLanguage("Portuguese", "Basic (A1/A2)", "pt", 20, "en"));
             
-            languageRepo.saveAll(languages);
+            languages.forEach(languageRepo::save);
 
             // 5. Poblar Información del Proyecto (Nuevo)
             logger.info("Limpiando tabla ProjectInfo...");
@@ -273,7 +273,7 @@ public class DataSeeder {
             projectInfos.add(createProjectInfo("tech_stack", "Tech Stack", esTech, "es"));
             projectInfos.add(createProjectInfo("tech_stack", "Tech Stack", enTech, "en"));
             
-            projectInfoRepo.saveAll(projectInfos);
+            projectInfos.forEach(projectInfoRepo::save);
 
             logger.info("Poblado de datos completado.");
         };
