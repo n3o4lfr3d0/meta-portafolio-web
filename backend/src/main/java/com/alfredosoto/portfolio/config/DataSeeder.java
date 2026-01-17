@@ -34,6 +34,7 @@ public class DataSeeder {
 
     @Bean
     @Order(2)
+    @ConditionalOnProperty(name = "app.dataseed.enabled", havingValue = "true", matchIfMissing = true)
     public CommandLineRunner seedData(ProfileRepository profileRepo,
                                       ExperienceRepository experienceRepo,
                                       SkillRepository skillRepo,
