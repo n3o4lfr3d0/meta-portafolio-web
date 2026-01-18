@@ -12,7 +12,6 @@ import com.alfredosoto.portfolio.repository.ProfileRepository;
 import com.alfredosoto.portfolio.repository.SkillRepository;
 import com.alfredosoto.portfolio.repository.ProjectInfoRepository;
 import com.alfredosoto.portfolio.repository.LanguageRepository;
-import com.alfredosoto.portfolio.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -49,36 +48,23 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
     private final ObjectProvider<EducationRepository> educationRepoProvider;
     private final ObjectProvider<LanguageRepository> languageRepoProvider;
     private final ObjectProvider<ProjectInfoRepository> projectInfoRepoProvider;
-    private final AuthService authService;
 
     public DataSeeder(ObjectProvider<ProfileRepository> profileRepoProvider,
                       ObjectProvider<ExperienceRepository> experienceRepoProvider,
                       ObjectProvider<SkillRepository> skillRepoProvider,
                       ObjectProvider<EducationRepository> educationRepoProvider,
                       ObjectProvider<LanguageRepository> languageRepoProvider,
-                      ObjectProvider<ProjectInfoRepository> projectInfoRepoProvider,
-                      AuthService authService) {
+                      ObjectProvider<ProjectInfoRepository> projectInfoRepoProvider) {
         this.profileRepoProvider = profileRepoProvider;
         this.experienceRepoProvider = experienceRepoProvider;
         this.skillRepoProvider = skillRepoProvider;
         this.educationRepoProvider = educationRepoProvider;
         this.languageRepoProvider = languageRepoProvider;
         this.projectInfoRepoProvider = projectInfoRepoProvider;
-        this.authService = authService;
     }
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        // 0. Siempre sincronizar usuario Admin (Critico para acceso)
-        // Esto asegura que las credenciales de entorno se apliquen aunque el seeding de contenido esté desactivado.
-        try {
-            logger.info("🔐 Sincronizando usuario Admin con variables de entorno...");
-            authService.createAdminUserIfNotFound();
-            logger.info("✅ Usuario Admin sincronizado correctamente.");
-        } catch (Exception e) {
-            logger.error("❌ Error al sincronizar usuario Admin: {}", e.getMessage());
-        }
-
         // 1. Global Check: If disabled via config/env, stop immediately.
         if (!dataSeedEnabled) {
             logger.info("🛑 DataSeeder de CONTENIDO DESHABILITADO por configuración (app.dataseed.enabled=false). Perfil: '{}'", activeProfile);

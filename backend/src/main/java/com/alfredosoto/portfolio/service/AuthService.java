@@ -4,6 +4,7 @@ import com.alfredosoto.portfolio.dto.LoginRequest;
 import com.alfredosoto.portfolio.dto.LoginResponse;
 import com.alfredosoto.portfolio.entity.UserEntity;
 import com.alfredosoto.portfolio.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,12 +69,17 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    @PostConstruct
+    public void init() {
+        createAdminUserIfNotFound();
+    }
+
     public void createAdminUserIfNotFound() {
         if (defaultAdminUsername == null || defaultAdminPassword == null) {
             throw new IllegalStateException("Las credenciales de Admin (usuario/password) no están configuradas.");
         }
 
-        logger.info("🔐 Verificando usuario Admin: '{}'", defaultAdminUsername);
+        logger.info("🔐 [AuthService] Inicializando. Usuario Admin configurado: '{}'", defaultAdminUsername);
 
         UserEntity user = userRepository.findByUsername(defaultAdminUsername)
                 .orElseGet(() -> {
