@@ -4,8 +4,6 @@ import com.alfredosoto.portfolio.dto.LoginRequest;
 import com.alfredosoto.portfolio.dto.LoginResponse;
 import com.alfredosoto.portfolio.entity.UserEntity;
 import com.alfredosoto.portfolio.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +15,6 @@ import java.util.Optional;
 
 @Service
 public class AuthService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
@@ -69,30 +65,19 @@ public class AuthService {
     }
 
     public void createAdminUserIfNotFound() {
-        if (defaultAdminUsername == null || defaultAdminPassword == null) {
-            throw new IllegalStateException("Las credenciales de Admin (usuario/password) no están configuradas.");
-        }
-
-        logger.info("🔐 Verificando usuario Admin: '{}'", defaultAdminUsername);
-
+        // Sync admin user from properties/env vars
+        // This ensures that if the environment variables change, the DB is updated on restart
         UserEntity user = userRepository.findByUsername(defaultAdminUsername)
                 .orElseGet(() -> {
-                    logger.info("🆕 Usuario Admin no encontrado. Creando nuevo usuario: '{}'", defaultAdminUsername);
                     UserEntity newUser = new UserEntity();
                     newUser.setUsername(defaultAdminUsername);
                     newUser.setRole("ADMIN");
                     return newUser;
                 });
-
+        
         // Always update the password hash to match the current configuration
-        String newHash = hashPassword(defaultAdminPassword);
-        if (!newHash.equals(user.getPasswordHash())) {
-            logger.info("🔑 Actualizando contraseña para usuario Admin: '{}'", defaultAdminUsername);
-            user.setPasswordHash(newHash);
-            userRepository.save(user);
-        } else {
-            logger.info("✅ Contraseña de Admin sincronizada y actual.");
-        }
+        user.setPasswordHash(hashPassword(defaultAdminPassword));
+        userRepository.save(user);
     }
 
     private String hashPassword(String password) {

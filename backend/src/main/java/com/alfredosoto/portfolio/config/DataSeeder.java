@@ -15,7 +15,6 @@ import com.alfredosoto.portfolio.repository.LanguageRepository;
 import com.alfredosoto.portfolio.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -42,28 +41,27 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
     @org.springframework.beans.factory.annotation.Value("${app.dataseed.enabled:true}")
     private boolean dataSeedEnabled;
 
-    // Use ObjectProvider for Lazy Loading of repositories to save memory when seeding is disabled
-    private final ObjectProvider<ProfileRepository> profileRepoProvider;
-    private final ObjectProvider<ExperienceRepository> experienceRepoProvider;
-    private final ObjectProvider<SkillRepository> skillRepoProvider;
-    private final ObjectProvider<EducationRepository> educationRepoProvider;
-    private final ObjectProvider<LanguageRepository> languageRepoProvider;
-    private final ObjectProvider<ProjectInfoRepository> projectInfoRepoProvider;
+    private final ProfileRepository profileRepo;
+    private final ExperienceRepository experienceRepo;
+    private final SkillRepository skillRepo;
+    private final EducationRepository educationRepo;
+    private final LanguageRepository languageRepo;
+    private final ProjectInfoRepository projectInfoRepo;
     private final AuthService authService;
 
-    public DataSeeder(ObjectProvider<ProfileRepository> profileRepoProvider,
-                      ObjectProvider<ExperienceRepository> experienceRepoProvider,
-                      ObjectProvider<SkillRepository> skillRepoProvider,
-                      ObjectProvider<EducationRepository> educationRepoProvider,
-                      ObjectProvider<LanguageRepository> languageRepoProvider,
-                      ObjectProvider<ProjectInfoRepository> projectInfoRepoProvider,
+    public DataSeeder(ProfileRepository profileRepo,
+                      ExperienceRepository experienceRepo,
+                      SkillRepository skillRepo,
+                      EducationRepository educationRepo,
+                      LanguageRepository languageRepo,
+                      ProjectInfoRepository projectInfoRepo,
                       AuthService authService) {
-        this.profileRepoProvider = profileRepoProvider;
-        this.experienceRepoProvider = experienceRepoProvider;
-        this.skillRepoProvider = skillRepoProvider;
-        this.educationRepoProvider = educationRepoProvider;
-        this.languageRepoProvider = languageRepoProvider;
-        this.projectInfoRepoProvider = projectInfoRepoProvider;
+        this.profileRepo = profileRepo;
+        this.experienceRepo = experienceRepo;
+        this.skillRepo = skillRepo;
+        this.educationRepo = educationRepo;
+        this.languageRepo = languageRepo;
+        this.projectInfoRepo = projectInfoRepo;
         this.authService = authService;
     }
 
@@ -106,20 +104,6 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
 
     private void seedData() {
         logger.info("Verificando datos iniciales en DynamoDB (Sufijo: '{}')...", tableSuffix);
-
-        // Resolve Repositories lazily only when seeding is enabled
-        ProfileRepository profileRepo = profileRepoProvider.getIfAvailable();
-        ExperienceRepository experienceRepo = experienceRepoProvider.getIfAvailable();
-        SkillRepository skillRepo = skillRepoProvider.getIfAvailable();
-        EducationRepository educationRepo = educationRepoProvider.getIfAvailable();
-        LanguageRepository languageRepo = languageRepoProvider.getIfAvailable();
-        ProjectInfoRepository projectInfoRepo = projectInfoRepoProvider.getIfAvailable();
-
-        if (profileRepo == null || experienceRepo == null || skillRepo == null ||
-                educationRepo == null || languageRepo == null || projectInfoRepo == null) {
-            logger.error("❌ Error CRÍTICO: No se pudieron inyectar los repositorios de DynamoDB. Seeding abortado.");
-            return;
-        }
 
         try {
             // 1. Poblar Perfil (ES y EN)
