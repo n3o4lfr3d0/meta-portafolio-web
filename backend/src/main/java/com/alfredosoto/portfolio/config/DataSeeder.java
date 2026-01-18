@@ -104,9 +104,6 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             seedProfile(profileRepo, "es");
             seedProfile(profileRepo, "en");
 
-            // Suggest GC to free memory after profile
-            System.gc();
-
             // 2. Poblar Experiencia (Limpieza total y recarga)
             logger.info("Limpiando tabla Experience...");
             experienceRepo.deleteAll();
@@ -180,10 +177,6 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
                 "https://www.cibertec.edu.pe", "en"));
 
             educationRepo.saveAll(educationList);
-            
-            // Free memory
-            educationList = null;
-            System.gc();
 
             // 3. Poblar Habilidades (Limpieza total y recarga)
             logger.info("Limpiando tabla Skills...");
@@ -283,10 +276,6 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             skills.add(createSkill("Emotional Intelligence", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "en"));
             
             skillRepo.saveAll(skills);
-            
-            // Free memory
-            skills = null;
-            System.gc();
 
             // 4. Poblar Idiomas
             logger.info("Limpiando tabla Language...");
@@ -305,10 +294,6 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             
             languageRepo.saveAll(languages);
             
-            // Free memory
-            languages = null;
-            System.gc();
-
             // 5. Poblar Información del Proyecto (Nuevo)
             logger.info("Limpiando tabla ProjectInfo...");
             projectInfoRepo.deleteAll();
