@@ -156,6 +156,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
                 "#", "en"));
 
             experienceRepo.saveAll(experiences);
+            experiences = null; // NOSONAR: Help GC in low memory env
             
             // 2.5 Poblar Educación (Limpieza total y recarga)
             logger.info("Limpiando tabla Education...");
@@ -178,6 +179,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
                 "https://www.cibertec.edu.pe", "en"));
 
             educationRepo.saveAll(educationList);
+            educationList = null; // NOSONAR: Help GC in low memory env
 
             // 3. Poblar Habilidades (Limpieza total y recarga)
             logger.info("Limpiando tabla Skills...");
@@ -294,6 +296,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             languages.add(createLanguage("Portuguese", "Basic (A1/A2)", "pt", 20, "en"));
             
             languageRepo.saveAll(languages);
+            languages = null; // NOSONAR: Help GC in low memory env
             
             // 5. Poblar Información del Proyecto (Nuevo)
             logger.info("Limpiando tabla ProjectInfo...");

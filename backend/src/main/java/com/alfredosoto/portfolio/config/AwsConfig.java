@@ -23,10 +23,19 @@ public class AwsConfig {
     public DynamoDbClient dynamoDbClient() {
         AwsCredentialsProvider credentialsProvider;
 
-        if (!"default".equals(awsProfile)) {
-            // Si se especifica un perfil distinto a default, forzamos el uso de ProfileCredentialsProvider
-            // Esto ignora variables de entorno globales y busca directamente en ~/.aws/credentials
-            credentialsProvider = ProfileCredentialsProvider.create(awsProfile);
+        // Validar si estamos en un entorno cloud (Railway, AWS) donde NO deberíamos usar perfil local
+        boolean isCloudEnv = System.getenv("RAILWAY_ENVIRONMENT") != null || System.getenv("AWS_EXECUTION_ENV") != null;
+
+        if (!"default".equals(awsProfile) && !isCloudEnv) {
+            try {
+                // Si se especifica un perfil distinto a default, intentamos usarlo
+                credentialsProvider = ProfileCredentialsProvider.create(awsProfile);
+                // Intentamos resolver credenciales para verificar si existen
+                credentialsProvider.resolveCredentials();
+            } catch (Exception e) {
+                // Si falla (ej. no existe ~/.aws/credentials en Railway), hacemos fallback a Default (variables de entorno)
+                credentialsProvider = DefaultCredentialsProvider.create();
+            }
         } else {
             credentialsProvider = DefaultCredentialsProvider.create();
         }
