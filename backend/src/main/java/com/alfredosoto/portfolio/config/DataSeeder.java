@@ -19,8 +19,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -105,203 +103,187 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             seedProfile(profileRepo, "es");
             seedProfile(profileRepo, "en");
 
-            // 2. Poblar Experiencia (Limpieza total y recarga)
-            logger.info("Limpiando tabla Experience...");
-            experienceRepo.deleteAll();
-            List<ExperienceEntity> experiences = new ArrayList<>();
+            // 2. Poblar Experiencia (Upsert - Idempotente)
+            logger.info("Actualizando tabla Experience...");
+            // experienceRepo.deleteAll(); // REMOVED to prevent OOM on large tables
             
             // 2.1 Sintad
-            experiences.add(createExperience( 
+            saveExperience(experienceRepo, 
                 "Fullstack Developer", 
                 "Sintad", 
                 "Sep 2023 - Presente", 
                 "Me encargo de desarrollar funcionalidades transversales a todos los módulos del software de comercio exterior Sumax. Cada módulo comprende una etapa del ciclo de vida de la importación y exportación de existencias. Mi misión es utilizar las mejores prácticas de programación funcional usando Java para implementar API Rest que se puedan consumir desde mi frontend desarrollado con Angular mediante formularios dinámicos.",
-                "https://www.sintad.com.pe", "es"));
+                "https://www.sintad.com.pe", "es");
             
-            experiences.add(createExperience( 
+            saveExperience(experienceRepo, 
                 "Fullstack Developer", 
                 "Sintad", 
                 "Sep 2023 - Present", 
                 "Responsible for developing cross-cutting functionalities for all modules of the Sumax foreign trade software. Each module covers a stage of the import/export lifecycle. My mission is to use best practices in functional programming with Java to implement REST APIs consumed by my Angular frontend using dynamic forms.",
-                "https://www.sintad.com.pe", "en"));
+                "https://www.sintad.com.pe", "en");
 
             // 2.2 Global S1
-            experiences.add(createExperience( 
+            saveExperience(experienceRepo, 
                 "Quality Manager", 
                 "Global S1", 
                 "Jun 2023 - Jul 2023", 
                 "Encargado de pruebas unitarias y automatizadas de software con Postman, DevTools y Selenium previos a la puesta en Producción. Responsable de redactar los informes de los resultados de los casos de Prueba a los desarrolladores para la corrección de posibles errores. Logros: Detección de bugs críticos antes de puesta en producción y reducción del 15% de carga laboral mediante uso eficiente de Postman.",
-                "#", "es"));
+                "#", "es");
 
-            experiences.add(createExperience( 
+            saveExperience(experienceRepo, 
                 "Quality Manager", 
                 "Global S1", 
                 "Jun 2023 - Jul 2023", 
                 "In charge of unit and automated software testing with Postman, DevTools, and Selenium prior to production deployment. Responsible for drafting test result reports for developers to fix potential errors. Achievements: Detection of critical bugs before production and 15% reduction in workload through efficient use of Postman.",
-                "#", "en"));
+                "#", "en");
 
             // 2.3 SG Tech
-            experiences.add(createExperience( 
+            saveExperience(experienceRepo, 
                 "Help Desk", 
                 "SG Tech", 
                 "Nov 2022 - Mar 2023", 
                 "Encargado de dar soporte directo a las tiendas de la cadena Rústica para el uso y correcto funcionamiento de su software. Reporte de errores al área de desarrollo. Logros: Incremento de eficacia y reducción de carga laboral en un 15% mediante optimización de tiempos de atención.",
-                "#", "es"));
+                "#", "es");
 
-            experiences.add(createExperience( 
+            saveExperience(experienceRepo, 
                 "Help Desk", 
                 "SG Tech", 
                 "Nov 2022 - Mar 2023", 
                 "In charge of providing direct support to Rústica chain stores for the correct use and operation of their software. Reporting errors to the development area. Achievements: Increased efficiency and 15% workload reduction through optimization of service times.",
-                "#", "en"));
+                "#", "en");
 
-            experienceRepo.saveAll(experiences);
-            experiences = null; // NOSONAR: Help GC in low memory env
-            
-            // 2.5 Poblar Educación (Limpieza total y recarga)
-            logger.info("Limpiando tabla Education...");
-            educationRepo.deleteAll();
-            List<EducationEntity> educationList = new ArrayList<>();
+            // 2.5 Poblar Educación (Upsert - Idempotente)
+            logger.info("Actualizando tabla Education...");
+            // educationRepo.deleteAll(); // REMOVED
             
             // Cibertec
-            educationList.add(createEducation(
+            saveEducation(educationRepo,
                 "Computación e Informática",
                 "Instituto Superior Tecnológico Cibertec",
                 "Jul 2020 - Jul 2023",
                 "Formación técnica profesional especializada en desarrollo de software y sistemas de información.",
-                "https://www.cibertec.edu.pe", "es"));
+                "https://www.cibertec.edu.pe", "es");
 
-            educationList.add(createEducation(
+            saveEducation(educationRepo,
                 "Computer Science",
                 "Cibertec Institute of Technology",
                 "Jul 2020 - Jul 2023",
                 "Professional technical training specialized in software development and information systems.",
-                "https://www.cibertec.edu.pe", "en"));
+                "https://www.cibertec.edu.pe", "en");
 
-            educationRepo.saveAll(educationList);
-            educationList = null; // NOSONAR: Help GC in low memory env
-
-            // 3. Poblar Habilidades (Limpieza total y recarga)
-            logger.info("Limpiando tabla Skills...");
-            skillRepo.deleteAll();
-            List<SkillEntity> skills = new ArrayList<>();
+            // 3. Poblar Habilidades (Upsert - Idempotente)
+            logger.info("Actualizando tabla Skills...");
+            // skillRepo.deleteAll(); // REMOVED
             
             // Backend
-            skills.add(createSkill("Java", BACKEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", "es"));
-            skills.add(createSkill("Java", BACKEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", "en"));
+            saveSkill(skillRepo, "Java", BACKEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", "es");
+            saveSkill(skillRepo, "Java", BACKEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", "en");
             
-            skills.add(createSkill("Spring Boot", BACKEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg", "es"));
-            skills.add(createSkill("Spring Boot", BACKEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg", "en"));
+            saveSkill(skillRepo, "Spring Boot", BACKEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg", "es");
+            saveSkill(skillRepo, "Spring Boot", BACKEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg", "en");
             
-            skills.add(createSkill("MySQL", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg", "es"));
-            skills.add(createSkill("MySQL", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg", "en"));
+            saveSkill(skillRepo, "MySQL", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg", "es");
+            saveSkill(skillRepo, "MySQL", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg", "en");
             
-            skills.add(createSkill("Microservicios", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original-wordmark.svg", "es"));
-            skills.add(createSkill("Microservices", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original-wordmark.svg", "en"));
+            saveSkill(skillRepo, "Microservicios", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original-wordmark.svg", "es");
+            saveSkill(skillRepo, "Microservices", BACKEND_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original-wordmark.svg", "en");
             
             // Frontend
-            skills.add(createSkill("Angular", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg", "es"));
-            skills.add(createSkill("Angular", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg", "en"));
+            saveSkill(skillRepo, "Angular", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg", "es");
+            saveSkill(skillRepo, "Angular", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg", "en");
             
-            skills.add(createSkill("TypeScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg", "es"));
-            skills.add(createSkill("TypeScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg", "en"));
+            saveSkill(skillRepo, "TypeScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg", "es");
+            saveSkill(skillRepo, "TypeScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg", "en");
             
-            skills.add(createSkill("JavaScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg", "es"));
-            skills.add(createSkill("JavaScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg", "en"));
+            saveSkill(skillRepo, "JavaScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg", "es");
+            saveSkill(skillRepo, "JavaScript", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg", "en");
             
-            skills.add(createSkill("HTML/CSS", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg", "es"));
-            skills.add(createSkill("HTML/CSS", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg", "en"));
+            saveSkill(skillRepo, "HTML/CSS", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg", "es");
+            saveSkill(skillRepo, "HTML/CSS", FRONTEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg", "en");
             
-            skills.add(createSkill("Tailwind CSS", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg", "es"));
-            skills.add(createSkill("Tailwind CSS", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg", "en"));
+            saveSkill(skillRepo, "Tailwind CSS", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg", "es");
+            saveSkill(skillRepo, "Tailwind CSS", FRONTEND_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg", "en");
 
             // Cloud & DevOps
-            skills.add(createSkill("AWS Cloud", CLOUD_SKILL, 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg", "es"));
-            skills.add(createSkill("AWS Cloud", CLOUD_SKILL, 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg", "en"));
+            saveSkill(skillRepo, "AWS Cloud", CLOUD_SKILL, 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg", "es");
+            saveSkill(skillRepo, "AWS Cloud", CLOUD_SKILL, 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg", "en");
             
-            skills.add(createSkill("DynamoDB", CLOUD_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dynamodb/dynamodb-original.svg", "es"));
-            skills.add(createSkill("DynamoDB", CLOUD_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dynamodb/dynamodb-original.svg", "en"));
+            saveSkill(skillRepo, "DynamoDB", CLOUD_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dynamodb/dynamodb-original.svg", "es");
+            saveSkill(skillRepo, "DynamoDB", CLOUD_SKILL, 85, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dynamodb/dynamodb-original.svg", "en");
             
-            skills.add(createSkill("Google Cloud", CLOUD_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg", "es"));
-            skills.add(createSkill("Google Cloud", CLOUD_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg", "en"));
+            saveSkill(skillRepo, "Google Cloud", CLOUD_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg", "es");
+            saveSkill(skillRepo, "Google Cloud", CLOUD_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg", "en");
             
-            skills.add(createSkill("Docker", DEVOPS_SKILL, 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg", "es"));
-            skills.add(createSkill("Docker", DEVOPS_SKILL, 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg", "en"));
+            saveSkill(skillRepo, "Docker", DEVOPS_SKILL, 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg", "es");
+            saveSkill(skillRepo, "Docker", DEVOPS_SKILL, 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg", "en");
             
-            skills.add(createSkill("Git", DEVOPS_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg", "es"));
-            skills.add(createSkill("Git", DEVOPS_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg", "en"));
+            saveSkill(skillRepo, "Git", DEVOPS_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg", "es");
+            saveSkill(skillRepo, "Git", DEVOPS_SKILL, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg", "en");
             
-            skills.add(createSkill("Linux", DEVOPS_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg", "es"));
-            skills.add(createSkill("Linux", DEVOPS_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg", "en"));
+            saveSkill(skillRepo, "Linux", DEVOPS_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg", "es");
+            saveSkill(skillRepo, "Linux", DEVOPS_SKILL, 70, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg", "en");
 
             // QA & Tools
-            skills.add(createSkill("Postman", "Tools", 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg", "es"));
-            skills.add(createSkill("Postman", "Tools", 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg", "en"));
+            saveSkill(skillRepo, "Postman", "Tools", 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg", "es");
+            saveSkill(skillRepo, "Postman", "Tools", 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg", "en");
             
-            skills.add(createSkill("Selenium", "QA", 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/selenium/selenium-original.svg", "es"));
-            skills.add(createSkill("Selenium", "QA", 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/selenium/selenium-original.svg", "en"));
+            saveSkill(skillRepo, "Selenium", "QA", 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/selenium/selenium-original.svg", "es");
+            saveSkill(skillRepo, "Selenium", "QA", 80, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/selenium/selenium-original.svg", "en");
             
-            skills.add(createSkill("JMeter", "QA", 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apache/apache-original.svg", "es"));
-            skills.add(createSkill("JMeter", "QA", 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apache/apache-original.svg", "en"));
+            saveSkill(skillRepo, "JMeter", "QA", 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apache/apache-original.svg", "es");
+            saveSkill(skillRepo, "JMeter", "QA", 75, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apache/apache-original.svg", "en");
             
-            skills.add(createSkill("JUnit", "QA", 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/junit/junit-original.svg", "es"));
-            skills.add(createSkill("JUnit", "QA", 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/junit/junit-original.svg", "en"));
+            saveSkill(skillRepo, "JUnit", "QA", 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/junit/junit-original.svg", "es");
+            saveSkill(skillRepo, "JUnit", "QA", 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/junit/junit-original.svg", "en");
             
-            skills.add(createSkill("Mockito", "QA", 85, "https://github.com/mockito/mockito.github.io/raw/master/img/logo%402x.png", "es"));
-            skills.add(createSkill("Mockito", "QA", 85, "https://github.com/mockito/mockito.github.io/raw/master/img/logo%402x.png", "en"));
+            saveSkill(skillRepo, "Mockito", "QA", 85, "https://github.com/mockito/mockito.github.io/raw/master/img/logo%402x.png", "es");
+            saveSkill(skillRepo, "Mockito", "QA", 85, "https://github.com/mockito/mockito.github.io/raw/master/img/logo%402x.png", "en");
 
             // Soft Skills
-            skills.add(createSkill("Metodologías Ágiles", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "es"));
-            skills.add(createSkill("Agile Methodologies", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "en"));
+            saveSkill(skillRepo, "Metodologías Ágiles", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "es");
+            saveSkill(skillRepo, "Agile Methodologies", SOFT_SKILLS, 90, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg", "en");
             
-            skills.add(createSkill("Liderazgo", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/manager.svg", "es"));
-            skills.add(createSkill("Leadership", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/manager.svg", "en"));
+            saveSkill(skillRepo, "Liderazgo", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/manager.svg", "es");
+            saveSkill(skillRepo, "Leadership", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/manager.svg", "en");
             
-            skills.add(createSkill("Trabajo en Equipo", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/conference-call.svg", "es"));
-            skills.add(createSkill("Teamwork", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/conference-call.svg", "en"));
+            saveSkill(skillRepo, "Trabajo en Equipo", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/conference-call.svg", "es");
+            saveSkill(skillRepo, "Teamwork", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/conference-call.svg", "en");
             
-            skills.add(createSkill("Comunicación Efectiva", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/comments.svg", "es"));
-            skills.add(createSkill("Effective Communication", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/comments.svg", "en"));
+            saveSkill(skillRepo, "Comunicación Efectiva", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/comments.svg", "es");
+            saveSkill(skillRepo, "Effective Communication", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/comments.svg", "en");
             
-            skills.add(createSkill("Resolución de Problemas", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/puzzle.svg", "es"));
-            skills.add(createSkill("Problem Solving", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/puzzle.svg", "en"));
+            saveSkill(skillRepo, "Resolución de Problemas", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/puzzle.svg", "es");
+            saveSkill(skillRepo, "Problem Solving", SOFT_SKILLS, 100, "https://api.iconify.design/flat-color-icons/puzzle.svg", "en");
             
-            skills.add(createSkill("Adaptabilidad", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/process.svg", "es"));
-            skills.add(createSkill("Adaptability", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/process.svg", "en"));
+            saveSkill(skillRepo, "Adaptabilidad", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/process.svg", "es");
+            saveSkill(skillRepo, "Adaptability", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/process.svg", "en");
             
-            skills.add(createSkill("Gestión del Tiempo", SOFT_SKILLS, 85, "https://api.iconify.design/flat-color-icons/clock.svg", "es"));
-            skills.add(createSkill("Time Management", SOFT_SKILLS, 85, "https://api.iconify.design/flat-color-icons/clock.svg", "en"));
+            saveSkill(skillRepo, "Gestión del Tiempo", SOFT_SKILLS, 85, "https://api.iconify.design/flat-color-icons/clock.svg", "es");
+            saveSkill(skillRepo, "Time Management", SOFT_SKILLS, 85, "https://api.iconify.design/flat-color-icons/clock.svg", "en");
             
-            skills.add(createSkill("Mentoría", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/reading.svg", "es"));
-            skills.add(createSkill("Mentoring", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/reading.svg", "en"));
+            saveSkill(skillRepo, "Mentoría", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/reading.svg", "es");
+            saveSkill(skillRepo, "Mentoring", SOFT_SKILLS, 90, "https://api.iconify.design/flat-color-icons/reading.svg", "en");
             
-            skills.add(createSkill("Inteligencia Emocional", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "es"));
-            skills.add(createSkill("Emotional Intelligence", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "en"));
+            saveSkill(skillRepo, "Inteligencia Emocional", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "es");
+            saveSkill(skillRepo, "Emotional Intelligence", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "en");
             
-            skillRepo.saveAll(skills);
-
             // 4. Poblar Idiomas
-            logger.info("Limpiando tabla Language...");
-            languageRepo.deleteAll();
-            List<LanguageEntity> languages = new ArrayList<>();
+            logger.info("Actualizando tabla Language...");
+            // languageRepo.deleteAll(); // REMOVED
 
             // ES Content
-            languages.add(createLanguage("Español", "Nativo", "es", 100, "es"));
-            languages.add(createLanguage("Inglés", "Intermedio (B1/B2)", "en", 60, "es"));
-            languages.add(createLanguage("Portugués", "Básico (A1/A2)", "pt", 20, "es"));
+            saveLanguage(languageRepo, "Español", "Nativo", "es", 100, "es");
+            saveLanguage(languageRepo, "Inglés", "Intermedio (B1/B2)", "en", 60, "es");
+            saveLanguage(languageRepo, "Portugués", "Básico (A1/A2)", "pt", 20, "es");
 
             // EN Content
-            languages.add(createLanguage("Spanish", "Native", "es", 100, "en"));
-            languages.add(createLanguage("English", "Intermediate (B1/B2)", "en", 60, "en"));
-            languages.add(createLanguage("Portuguese", "Basic (A1/A2)", "pt", 20, "en"));
-            
-            languageRepo.saveAll(languages);
-            languages = null; // NOSONAR: Help GC in low memory env
+            saveLanguage(languageRepo, "Spanish", "Native", "es", 100, "en");
+            saveLanguage(languageRepo, "English", "Intermediate (B1/B2)", "en", 60, "en");
+            saveLanguage(languageRepo, "Portuguese", "Basic (A1/A2)", "pt", 20, "en");
             
             // 5. Poblar Información del Proyecto (Nuevo)
-            logger.info("Limpiando tabla ProjectInfo...");
-            projectInfoRepo.deleteAll();
-            List<ProjectInfoEntity> projectInfos = new ArrayList<>();
+            logger.info("Actualizando tabla ProjectInfo...");
+            // projectInfoRepo.deleteAll(); // REMOVED
 
             String esTech = """
                 - Arquitectura: Hexagonal (Puertos y Adaptadores) y Clean Architecture.
@@ -335,12 +317,10 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
                 - Automated Continuous Deployment (CI/CD).
                 """;
 
-            projectInfos.add(createProjectInfo("Tecnologías", esTech, "es"));
-            projectInfos.add(createProjectInfo("Technologies", enTech, "en"));
-            projectInfos.add(createProjectInfo("Características Destacadas", esFeat, "es"));
-            projectInfos.add(createProjectInfo("Key Features", enFeat, "en"));
-
-            projectInfoRepo.saveAll(projectInfos);
+            saveProjectInfo(projectInfoRepo, "Tecnologías", esTech, "es");
+            saveProjectInfo(projectInfoRepo, "Technologies", enTech, "en");
+            saveProjectInfo(projectInfoRepo, "Características Destacadas", esFeat, "es");
+            saveProjectInfo(projectInfoRepo, "Key Features", enFeat, "en");
 
             logger.info("✅ DataSeeder completado exitosamente.");
 
@@ -353,7 +333,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
     private void seedProfile(ProfileRepository repo, String lang) {
         if ("en".equals(lang)) {
             ProfileEntity profile = new ProfileEntity();
-            profile.setId("1"); // Fixed ID for single profile
+            profile.setId("main_en"); // Fixed ID compatible with ProfileRepository.getProfile("en")
             profile.setLanguage("en");
             profile.setName("Alfredo Soto Nolazco");
             profile.setTitle("Fullstack Developer | Java | Spring Boot | Angular | AWS");
@@ -366,7 +346,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             repo.save(profile);
         } else {
             ProfileEntity profile = new ProfileEntity();
-            profile.setId("1"); // ID fijo para perfil único
+            profile.setId("main_es"); // Fixed ID compatible with ProfileRepository.getProfile("es")
             profile.setLanguage("es");
             profile.setName("Alfredo Soto Nolazco");
             profile.setTitle("Desarrollador Fullstack | Java | Spring Boot | Angular | AWS");
@@ -380,58 +360,73 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
         }
     }
 
-    private ExperienceEntity createExperience(String position, String company, String period, String description, String url, String lang) {
+    private void saveExperience(ExperienceRepository repo, String position, String company, String period, String description, String url, String lang) {
         ExperienceEntity exp = new ExperienceEntity();
-        exp.setId(UUID.randomUUID().toString());
+        // Deterministic ID to allow upserts and avoid duplicates
+        String uniqueKey = "experience_" + company.trim() + "_" + position.trim() + "_" + lang;
+        exp.setId(UUID.nameUUIDFromBytes(uniqueKey.getBytes()).toString());
+        
         exp.setTitle(position);
         exp.setCompany(company);
         exp.setPeriod(period);
         exp.setDescription(description);
         exp.setLink(url);
         exp.setLanguage(lang);
-        return exp;
+        repo.save(exp);
     }
 
-    private SkillEntity createSkill(String name, String category, int level, String iconUrl, String lang) {
+    private void saveSkill(SkillRepository repo, String name, String category, int level, String iconUrl, String lang) {
         SkillEntity skill = new SkillEntity();
-        skill.setId(UUID.randomUUID().toString());
+        // Deterministic ID
+        String uniqueKey = "skill_" + category.trim() + "_" + name.trim() + "_" + lang;
+        skill.setId(UUID.nameUUIDFromBytes(uniqueKey.getBytes()).toString());
+        
         skill.setName(name);
         skill.setCategory(category);
         skill.setLevel(level);
         skill.setIcon(iconUrl);
         skill.setLanguage(lang);
-        return skill;
+        repo.save(skill);
     }
 
-    private EducationEntity createEducation(String degree, String institution, String period, String description, String url, String lang) {
+    private void saveEducation(EducationRepository repo, String degree, String institution, String period, String description, String url, String lang) {
         EducationEntity edu = new EducationEntity();
-        edu.setId(UUID.randomUUID().toString());
+        // Deterministic ID
+        String uniqueKey = "education_" + institution.trim() + "_" + degree.trim() + "_" + lang;
+        edu.setId(UUID.nameUUIDFromBytes(uniqueKey.getBytes()).toString());
+        
         edu.setDegree(degree);
         edu.setInstitution(institution);
         edu.setPeriod(period);
         edu.setDescription(description);
         edu.setLink(url);
         edu.setLanguage(lang);
-        return edu;
+        repo.save(edu);
     }
     
-    private LanguageEntity createLanguage(String name, String level, String code, int percentage, String lang) {
+    private void saveLanguage(LanguageRepository repo, String name, String level, String code, int percentage, String lang) {
         LanguageEntity l = new LanguageEntity();
-        l.setId(UUID.randomUUID().toString());
+        // Deterministic ID
+        String uniqueKey = "language_" + code.trim() + "_" + name.trim() + "_" + lang;
+        l.setId(UUID.nameUUIDFromBytes(uniqueKey.getBytes()).toString());
+        
         l.setName(name);
         l.setLevel(level);
         l.setCode(code);
         l.setPercentage(percentage);
         l.setLanguage(lang);
-        return l;
+        repo.save(l);
     }
 
-    private ProjectInfoEntity createProjectInfo(String title, String content, String lang) {
+    private void saveProjectInfo(ProjectInfoRepository repo, String title, String content, String lang) {
         ProjectInfoEntity p = new ProjectInfoEntity();
-        p.setId(UUID.randomUUID().toString());
+        // Deterministic ID
+        String uniqueKey = "project_" + title.trim() + "_" + lang;
+        p.setId(UUID.nameUUIDFromBytes(uniqueKey.getBytes()).toString());
+        
         p.setCategory(title);
         p.setContent(content);
         p.setLanguage(lang);
-        return p;
+        repo.save(p);
     }
 }
