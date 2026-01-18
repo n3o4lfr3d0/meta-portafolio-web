@@ -2,18 +2,25 @@ package com.alfredosoto.portfolio.entity;
 
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 import java.util.List;
 
 @DynamoDbBean
 public class ProfileEntity {
     private String id; // Usaremos un ID fijo como "main" para el perfil principal
+    private String language;
     private String name;
     private String title;
     private String summary;
     private String location;
     private String experienceYears;
     private String specialization;
+    private String photoUrl;
+    private String cvUrl;
+    private String githubUrl;
+    private String linkedinUrl;
+    private String email;
     private List<SocialLinkEntity> socialLinks;
 
     @DynamoDbPartitionKey
@@ -24,6 +31,10 @@ public class ProfileEntity {
     public void setId(String id) {
         this.id = id;
     }
+
+    @DynamoDbSortKey
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -42,6 +53,21 @@ public class ProfileEntity {
 
     public String getSpecialization() { return specialization; }
     public void setSpecialization(String specialization) { this.specialization = specialization; }
+
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+
+    public String getCvUrl() { return cvUrl; }
+    public void setCvUrl(String cvUrl) { this.cvUrl = cvUrl; }
+
+    public String getGithubUrl() { return githubUrl; }
+    public void setGithubUrl(String githubUrl) { this.githubUrl = githubUrl; }
+
+    public String getLinkedinUrl() { return linkedinUrl; }
+    public void setLinkedinUrl(String linkedinUrl) { this.linkedinUrl = linkedinUrl; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public List<SocialLinkEntity> getSocialLinks() { return socialLinks; }
     public void setSocialLinks(List<SocialLinkEntity> socialLinks) { this.socialLinks = socialLinks; }

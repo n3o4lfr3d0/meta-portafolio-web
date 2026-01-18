@@ -15,17 +15,16 @@ import com.alfredosoto.portfolio.repository.LanguageRepository;
 import com.alfredosoto.portfolio.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.annotation.Order;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-@Configuration
-public class DataSeeder {
+@Component
+public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataSeeder.class);
 
@@ -41,46 +40,72 @@ public class DataSeeder {
     @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:default}")
     private String activeProfile;
 
-    @Bean
-    @Order(2)
-    @ConditionalOnProperty(name = "app.dataseed.enabled", havingValue = "true", matchIfMissing = true)
-    public CommandLineRunner seedData(ProfileRepository profileRepo,
-                                      ExperienceRepository experienceRepo,
-                                      SkillRepository skillRepo,
-                                      EducationRepository educationRepo,
-                                      LanguageRepository languageRepo,
-                                      ProjectInfoRepository projectInfoRepo,
-                                      AuthService authService) {
-        return args -> {
-            // SAFETY CHECK: Prevent accidental wiping of production tables
-            // Only block if activeProfile is prod/production AND dataSeedEnabled is NOT explicitly true
-            boolean isProd = "prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile);
-            String dataSeedEnabledProp = System.getProperty("app.dataseed.enabled", System.getenv("DATA_SEED_ENABLED"));
-            boolean explicitEnable = "true".equalsIgnoreCase(dataSeedEnabledProp);
+    private final ProfileRepository profileRepo;
+    private final ExperienceRepository experienceRepo;
+    private final SkillRepository skillRepo;
+    private final EducationRepository educationRepo;
+    private final LanguageRepository languageRepo;
+    private final ProjectInfoRepository projectInfoRepo;
+    private final AuthService authService;
 
-            if ((tableSuffix == null || tableSuffix.trim().isEmpty()) && !"local".equalsIgnoreCase(activeProfile)) {
-                // Allow prod seed ONLY if explicitly enabled
-                if (isProd && explicitEnable) {
-                     logger.warn("⚠️ ALERTA: DataSeeder habilitado explícitamente en PRODUCCIÓN. Se procederá a borrar y recargar datos.");
-                } else {
-                    logger.error("🛑 SEGURIDAD: DataSeeder ABORTADO. Se detectó sufijo de tabla vacío en entorno '{}'. Configure DYNAMODB_TABLE_SUFFIX para evitar borrar datos de producción.", activeProfile);
-                    return;
-                }
-            }
-            
-            if (isProd && !explicitEnable) {
-                logger.info("🔒 DataSeeder omitido en entorno de PRODUCCIÓN (DATA_SEED_ENABLED=false).");
+    public DataSeeder(ProfileRepository profileRepo,
+                      ExperienceRepository experienceRepo,
+                      SkillRepository skillRepo,
+                      EducationRepository educationRepo,
+                      LanguageRepository languageRepo,
+                      ProjectInfoRepository projectInfoRepo,
+                      AuthService authService) {
+        this.profileRepo = profileRepo;
+        this.experienceRepo = experienceRepo;
+        this.skillRepo = skillRepo;
+        this.educationRepo = educationRepo;
+        this.languageRepo = languageRepo;
+        this.projectInfoRepo = projectInfoRepo;
+        this.authService = authService;
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        // SAFETY CHECK: Prevent accidental wiping of production tables
+        boolean isProd = "prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile);
+        String dataSeedEnabledProp = System.getProperty("app.dataseed.enabled", System.getenv("DATA_SEED_ENABLED"));
+        // Check property explicitly. Note: Environment variable is string "true"
+        boolean explicitEnable = "true".equalsIgnoreCase(dataSeedEnabledProp);
+
+        if ((tableSuffix == null || tableSuffix.trim().isEmpty()) && !"local".equalsIgnoreCase(activeProfile)) {
+            // Allow prod seed ONLY if explicitly enabled
+            if (isProd && explicitEnable) {
+                 logger.warn("⚠️ ALERTA: DataSeeder habilitado explícitamente en PRODUCCIÓN. Se procederá a borrar y recargar datos.");
+            } else {
+                logger.warn("🛑 SEGURIDAD: DataSeeder ABORTADO. Se detectó sufijo de tabla vacío en entorno '{}'. Configure DYNAMODB_TABLE_SUFFIX o DATA_SEED_ENABLED=true para ejecutar.", activeProfile);
                 return;
             }
+        }
+        
+        if (isProd && !explicitEnable) {
+            logger.info("🔒 DataSeeder omitido en entorno de PRODUCCIÓN (DATA_SEED_ENABLED=false).");
+            return;
+        }
 
-            logger.info("Verificando datos iniciales en DynamoDB (Sufijo: '{}')...", tableSuffix);
+        // Run in a separate thread to avoid blocking the main thread if possible, 
+        // although ApplicationReadyEvent is already late enough.
+        // We run directly but with try-catch to ensure app stays alive.
+        seedData();
+    }
 
+    private void seedData() {
+        logger.info("Verificando datos iniciales en DynamoDB (Sufijo: '{}')...", tableSuffix);
+
+        try {
             // 0. Seed Admin User
             authService.createAdminUserIfNotFound();
 
             // 1. Poblar Perfil (ES y EN)
             seedProfile(profileRepo, "es");
             seedProfile(profileRepo, "en");
+
+            // Suggest GC to free memory after profile
+            System.gc();
 
             // 2. Poblar Experiencia (Limpieza total y recarga)
             logger.info("Limpiando tabla Experience...");
@@ -133,7 +158,7 @@ public class DataSeeder {
                 "#", "en"));
 
             experienceRepo.saveAll(experiences);
-
+            
             // 2.5 Poblar Educación (Limpieza total y recarga)
             logger.info("Limpiando tabla Education...");
             educationRepo.deleteAll();
@@ -155,6 +180,10 @@ public class DataSeeder {
                 "https://www.cibertec.edu.pe", "en"));
 
             educationRepo.saveAll(educationList);
+            
+            // Free memory
+            educationList = null;
+            System.gc();
 
             // 3. Poblar Habilidades (Limpieza total y recarga)
             logger.info("Limpiando tabla Skills...");
@@ -253,7 +282,11 @@ public class DataSeeder {
             skills.add(createSkill("Inteligencia Emocional", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "es"));
             skills.add(createSkill("Emotional Intelligence", SOFT_SKILLS, 95, "https://api.iconify.design/flat-color-icons/idea.svg", "en"));
             
-            skills.forEach(skillRepo::save);
+            skillRepo.saveAll(skills);
+            
+            // Free memory
+            skills = null;
+            System.gc();
 
             // 4. Poblar Idiomas
             logger.info("Limpiando tabla Language...");
@@ -270,7 +303,11 @@ public class DataSeeder {
             languages.add(createLanguage("English", "Intermediate (B1/B2)", "en", 60, "en"));
             languages.add(createLanguage("Portuguese", "Basic (A1/A2)", "pt", 20, "en"));
             
-            languages.forEach(languageRepo::save);
+            languageRepo.saveAll(languages);
+            
+            // Free memory
+            languages = null;
+            System.gc();
 
             // 5. Poblar Información del Proyecto (Nuevo)
             logger.info("Limpiando tabla ProjectInfo...");
@@ -279,135 +316,133 @@ public class DataSeeder {
 
             String esTech = """
                 - Arquitectura: Hexagonal (Puertos y Adaptadores) y Clean Architecture.
-                - Backend: Java 17+, Spring Boot 3.2.3, REST API.
-                - Base de Datos: AWS DynamoDB (NoSQL).
-                - Frontend: Angular 17+ (Componentes Standalone, Signals), Tailwind CSS.
-                - IA: API de Google Gemini (Modelo Flash).
-                - Despliegue: Contenedores Docker.
-                - Patrones Clave: DTO, Repository, Dependency Injection.
+                - Backend: Java 21, Spring Boot 3, DynamoDB, AWS SDK v2, Spring Security (JWT).
+                - Frontend: Angular 17, Tailwind CSS, Componentes Standalone.
+                - DevOps: Docker, GitHub Actions, Railway (Backend/BD), Vercel (Frontend).
+                - Testing: JUnit 5, Mockito.
                 """;
 
             String enTech = """
-                - Architecture: Hexagonal (Ports and Adapters) & Clean Architecture.
-                - Backend: Java 17+, Spring Boot 3.2.3, REST API.
-                - Database: AWS DynamoDB (NoSQL).
-                - Frontend: Angular 17+ (Standalone Components, Signals), Tailwind CSS.
-                - AI: Google Gemini API (Flash Model).
-                - Deployment: Docker Containers.
-                - Key Patterns: DTO, Repository, Dependency Injection.
+                - Architecture: Hexagonal (Ports and Adapters) and Clean Architecture.
+                - Backend: Java 21, Spring Boot 3, DynamoDB, AWS SDK v2, Spring Security (JWT).
+                - Frontend: Angular 17, Tailwind CSS, Standalone Components.
+                - DevOps: Docker, GitHub Actions, Railway (Backend/DB), Vercel (Frontend).
+                - Testing: JUnit 5, Mockito.
                 """;
 
-            projectInfos.add(createProjectInfo("tech_stack", "Tech Stack", esTech, "es"));
-            projectInfos.add(createProjectInfo("tech_stack", "Tech Stack", enTech, "en"));
-            
-            projectInfos.forEach(projectInfoRepo::save);
+            String esFeat = """
+                - API REST reactiva y segura con Spring Boot.
+                - Base de datos NoSQL DynamoDB optimizada para alta concurrencia.
+                - Frontend moderno y responsivo con Angular 17.
+                - Panel administrativo seguro para gestión de contenido.
+                - Despliegue continuo (CI/CD) automatizado.
+                """;
 
-            logger.info("Poblado de datos completado.");
-        };
-    }
+            String enFeat = """
+                - Reactive and secure REST API with Spring Boot.
+                - NoSQL DynamoDB database optimized for high concurrency.
+                - Modern and responsive frontend with Angular 17.
+                - Secure administrative panel for content management.
+                - Automated Continuous Deployment (CI/CD).
+                """;
 
-    private ProjectInfoEntity createProjectInfo(String id, String category, String content, String lang) {
-        ProjectInfoEntity info = new ProjectInfoEntity();
-        info.setId(id);
-        info.setCategory(category);
-        info.setContent(content);
-        info.setLanguage(lang);
-        return info;
-    }
+            projectInfos.add(createProjectInfo("Tecnologías", esTech, "es"));
+            projectInfos.add(createProjectInfo("Technologies", enTech, "en"));
+            projectInfos.add(createProjectInfo("Características Destacadas", esFeat, "es"));
+            projectInfos.add(createProjectInfo("Key Features", enFeat, "en"));
 
+            projectInfoRepo.saveAll(projectInfos);
 
-    private LanguageEntity createLanguage(String name, String level, String code, Integer percentage, String lang) {
-        LanguageEntity language = new LanguageEntity();
-        language.setName(name);
-        language.setLevel(level);
-        language.setCode(code);
-        language.setPercentage(percentage);
-        language.setLanguage(lang);
-        return language;
-    }
+            logger.info("✅ DataSeeder completado exitosamente.");
 
-    private void seedProfile(ProfileRepository profileRepo, String lang) {
-        String id = "main_" + lang;
-        ProfileEntity existingProfile = profileRepo.getProfile(lang);
-        
-        if (existingProfile == null) {
-            logger.info("Poblando perfil para idioma: " + lang);
-            ProfileEntity profile = new ProfileEntity();
-            profile.setId(id);
-            profile.setName("Alfredo Soto");
-            setupProfileData(profile, lang);
-            profileRepo.save(profile);
-        } else {
-            logger.info("Actualizando perfil para idioma: " + lang);
-            setupProfileData(existingProfile, lang);
-            profileRepo.save(existingProfile);
+        } catch (Throwable e) {
+            logger.error("❌ ERROR CRÍTICO en DataSeeder: {}", e.getMessage(), e);
+            // No re-lanzamos la excepción para evitar detener la aplicación si ya está corriendo
         }
     }
 
-    private void setupProfileData(ProfileEntity profile, String lang) {
-        profile.setTitle("Software Developer");
-        
+    private void seedProfile(ProfileRepository repo, String lang) {
         if ("en".equals(lang)) {
-            profile.setSummary("I have over 2 years of professional experience as a web developer. The learning process is constant, and my perseverance allows me to contribute important opinions in strategic planning meetings for the start of each development alongside my team.");
-            profile.setLocation("Lima, Peru 🇵🇪");
-            profile.setExperienceYears("+2 years");
-            profile.setSpecialization("Java & Angular");
+            ProfileEntity profile = new ProfileEntity();
+            profile.setId("1"); // Fixed ID for single profile
+            profile.setLanguage("en");
+            profile.setName("Alfredo Soto Nolazco");
+            profile.setTitle("Fullstack Developer | Java | Spring Boot | Angular | AWS");
+            profile.setSummary("Systems Engineer with experience in software development using Java, Spring Boot, Angular, and AWS. Passionate about clean architecture, good practices, and continuous learning. Focused on creating scalable and efficient solutions.");
+            profile.setPhotoUrl("https://avatars.githubusercontent.com/u/108922650?v=4"); // Replace with real URL
+            profile.setCvUrl("/assets/cv-alfredo-soto-en.pdf"); // Local path or cloud URL
+            profile.setGithubUrl("https://github.com/n3o4lfr3d0");
+            profile.setLinkedinUrl("https://www.linkedin.com/in/alfredosoto");
+            profile.setEmail("alfredo.soton@gmail.com");
+            repo.save(profile);
         } else {
-            profile.setSummary("Actualmente tengo más de 2 años trabajando como desarrollador web de forma profesional. El proceso de aprendizaje es constante y mi perseverancia me permite aportar opiniones importantes en las reuniones de planeamiento estratégico para el inicio de cada desarrollo junto a mi equipo.");
-            profile.setLocation("Lima, Perú 🇵🇪");
-            profile.setExperienceYears("+2 años");
-            profile.setSpecialization("Java & Angular");
+            ProfileEntity profile = new ProfileEntity();
+            profile.setId("1"); // ID fijo para perfil único
+            profile.setLanguage("es");
+            profile.setName("Alfredo Soto Nolazco");
+            profile.setTitle("Desarrollador Fullstack | Java | Spring Boot | Angular | AWS");
+            profile.setSummary("Ingeniero de Sistemas con experiencia en desarrollo de software utilizando Java, Spring Boot, Angular y AWS. Apasionado por la arquitectura limpia, buenas prácticas y aprendizaje continuo. Enfocado en crear soluciones escalables y eficientes.");
+            profile.setPhotoUrl("https://avatars.githubusercontent.com/u/108922650?v=4"); // Reemplazar con URL real
+            profile.setCvUrl("/assets/cv-alfredo-soto.pdf"); // Ruta local o URL nube
+            profile.setGithubUrl("https://github.com/n3o4lfr3d0");
+            profile.setLinkedinUrl("https://www.linkedin.com/in/alfredosoto");
+            profile.setEmail("alfredo.soton@gmail.com");
+            repo.save(profile);
         }
-        
-        ProfileEntity.SocialLinkEntity linkedin = new ProfileEntity.SocialLinkEntity();
-        linkedin.setName("LinkedIn");
-        linkedin.setUrl("https://www.linkedin.com/in/alfredo-soto-nolazco/");
-        linkedin.setIcon("linkedin");
-        
-        ProfileEntity.SocialLinkEntity email = new ProfileEntity.SocialLinkEntity();
-        email.setName("Email");
-        email.setUrl("mailto:alfredosotonolazco@gmail.com");
-        email.setIcon("mail");
-        
-        ProfileEntity.SocialLinkEntity github = new ProfileEntity.SocialLinkEntity();
-        github.setName("GitHub");
-        github.setUrl("https://github.com/n3o4lfr3d0");
-        github.setIcon("github");
-
-        profile.setSocialLinks(List.of(linkedin, email, github));
     }
 
-    private ExperienceEntity createExperience(String title, String company, String period, String description, String link, String lang) {
-        logger.info("Creando experiencia (" + lang + "): " + company);
-        ExperienceEntity newExp = new ExperienceEntity();
-        newExp.setTitle(title);
-        newExp.setCompany(company);
-        newExp.setPeriod(period);
-        newExp.setDescription(description);
-        newExp.setLink(link);
-        newExp.setLanguage(lang);
-        return newExp;
+    private ExperienceEntity createExperience(String position, String company, String period, String description, String url, String lang) {
+        ExperienceEntity exp = new ExperienceEntity();
+        exp.setId(UUID.randomUUID().toString());
+        exp.setTitle(position);
+        exp.setCompany(company);
+        exp.setPeriod(period);
+        exp.setDescription(description);
+        exp.setLink(url);
+        exp.setLanguage(lang);
+        return exp;
     }
 
-    private EducationEntity createEducation(String degree, String institution, String period, String description, String link, String lang) {
-        logger.info("Creando educación (" + lang + "): " + institution);
-        EducationEntity newEdu = new EducationEntity();
-        newEdu.setDegree(degree);
-        newEdu.setInstitution(institution);
-        newEdu.setPeriod(period);
-        newEdu.setDescription(description);
-        newEdu.setLink(link);
-        newEdu.setLanguage(lang);
-        return newEdu;
-    }
-
-    private SkillEntity createSkill(String name, String category, Integer level, String icon, String lang) {
+    private SkillEntity createSkill(String name, String category, int level, String iconUrl, String lang) {
         SkillEntity skill = new SkillEntity();
+        skill.setId(UUID.randomUUID().toString());
         skill.setName(name);
         skill.setCategory(category);
         skill.setLevel(level);
-        skill.setIcon(icon);
+        skill.setIcon(iconUrl);
         skill.setLanguage(lang);
         return skill;
+    }
+
+    private EducationEntity createEducation(String degree, String institution, String period, String description, String url, String lang) {
+        EducationEntity edu = new EducationEntity();
+        edu.setId(UUID.randomUUID().toString());
+        edu.setDegree(degree);
+        edu.setInstitution(institution);
+        edu.setPeriod(period);
+        edu.setDescription(description);
+        edu.setLink(url);
+        edu.setLanguage(lang);
+        return edu;
+    }
+    
+    private LanguageEntity createLanguage(String name, String level, String code, int percentage, String lang) {
+        LanguageEntity l = new LanguageEntity();
+        l.setId(UUID.randomUUID().toString());
+        l.setName(name);
+        l.setLevel(level);
+        l.setCode(code);
+        l.setPercentage(percentage);
+        l.setLanguage(lang);
+        return l;
+    }
+
+    private ProjectInfoEntity createProjectInfo(String title, String content, String lang) {
+        ProjectInfoEntity p = new ProjectInfoEntity();
+        p.setId(UUID.randomUUID().toString());
+        p.setCategory(title);
+        p.setContent(content);
+        p.setLanguage(lang);
+        return p;
     }
 }
