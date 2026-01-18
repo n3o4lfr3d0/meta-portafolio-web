@@ -34,18 +34,20 @@ public class DynamoDbSchemaInitializer {
     @Order(1)
     public CommandLineRunner initializeTables(DynamoDbEnhancedClient enhancedClient, DynamoDbClient standardClient) {
         return args -> {
-            logger.info("Verificando tablas de DynamoDB (Suffix: '{}')...", tableSuffix);
+            // Sanitizar el sufijo eliminando comillas dobles extra si existen
+            String sanitizedSuffix = tableSuffix != null ? tableSuffix.replace("\"", "") : "";
+            logger.info("Verificando tablas de DynamoDB (Suffix: '{}')...", sanitizedSuffix);
 
-            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Profile" + tableSuffix, ProfileEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Skills" + tableSuffix, SkillEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Experience" + tableSuffix, ExperienceEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Education" + tableSuffix, EducationEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_DailyContent" + tableSuffix, DailyContentEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "User" + tableSuffix, com.alfredosoto.portfolio.entity.UserEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Comment" + tableSuffix, CommentEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Contact" + tableSuffix, ContactEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "Language" + tableSuffix, LanguageEntity.class);
-            createTableIfNotExists(enhancedClient, standardClient, "ProjectInfo" + tableSuffix, ProjectInfoEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Profile" + sanitizedSuffix, ProfileEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Skills" + sanitizedSuffix, SkillEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Experience" + sanitizedSuffix, ExperienceEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_Education" + sanitizedSuffix, EducationEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Portfolio_DailyContent" + sanitizedSuffix, DailyContentEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "User" + sanitizedSuffix, com.alfredosoto.portfolio.entity.UserEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Comment" + sanitizedSuffix, CommentEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Contact" + sanitizedSuffix, ContactEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "Language" + sanitizedSuffix, LanguageEntity.class);
+            createTableIfNotExists(enhancedClient, standardClient, "ProjectInfo" + sanitizedSuffix, ProjectInfoEntity.class);
             
             logger.info("Verificación de esquema completada.");
         };
