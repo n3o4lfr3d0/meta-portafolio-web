@@ -67,9 +67,19 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
+        // 0. Siempre sincronizar usuario Admin (Critico para acceso)
+        // Esto asegura que las credenciales de entorno se apliquen aunque el seeding de contenido esté desactivado.
+        try {
+            logger.info("🔐 Sincronizando usuario Admin con variables de entorno...");
+            authService.createAdminUserIfNotFound();
+            logger.info("✅ Usuario Admin sincronizado correctamente.");
+        } catch (Exception e) {
+            logger.error("❌ Error al sincronizar usuario Admin: {}", e.getMessage());
+        }
+
         // 1. Global Check: If disabled via config/env, stop immediately.
         if (!dataSeedEnabled) {
-            logger.info("🛑 DataSeeder DESHABILITADO por configuración (app.dataseed.enabled=false). Perfil: '{}'", activeProfile);
+            logger.info("🛑 DataSeeder de CONTENIDO DESHABILITADO por configuración (app.dataseed.enabled=false). Perfil: '{}'", activeProfile);
             return;
         }
 
@@ -96,9 +106,6 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
         logger.info("Verificando datos iniciales en DynamoDB (Sufijo: '{}')...", tableSuffix);
 
         try {
-            // 0. Seed Admin User
-            authService.createAdminUserIfNotFound();
-
             // 1. Poblar Perfil (ES y EN)
             seedProfile(profileRepo, "es");
             seedProfile(profileRepo, "en");
