@@ -40,6 +40,9 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
     @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:default}")
     private String activeProfile;
 
+    @org.springframework.beans.factory.annotation.Value("${app.dataseed.enabled:true}")
+    private boolean dataSeedEnabled;
+
     private final ProfileRepository profileRepo;
     private final ExperienceRepository experienceRepo;
     private final SkillRepository skillRepo;
@@ -66,15 +69,18 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
+        // 1. Global Check: If disabled via config/env, stop immediately.
+        if (!dataSeedEnabled) {
+            logger.info("🛑 DataSeeder DESHABILITADO por configuración (app.dataseed.enabled=false). Perfil: '{}'", activeProfile);
+            return;
+        }
+
         // SAFETY CHECK: Prevent accidental wiping of production tables
         boolean isProd = "prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile);
-        String dataSeedEnabledProp = System.getProperty("app.dataseed.enabled", System.getenv("DATA_SEED_ENABLED"));
-        // Check property explicitly. Note: Environment variable is string "true"
-        boolean explicitEnable = "true".equalsIgnoreCase(dataSeedEnabledProp);
 
         if ((tableSuffix == null || tableSuffix.trim().isEmpty()) && !"local".equalsIgnoreCase(activeProfile)) {
-            // Allow prod seed ONLY if explicitly enabled
-            if (isProd && explicitEnable) {
+            // Allow prod seed ONLY if explicitly enabled (redundant check but safe)
+            if (isProd && dataSeedEnabled) {
                  logger.warn("⚠️ ALERTA: DataSeeder habilitado explícitamente en PRODUCCIÓN. Se procederá a borrar y recargar datos.");
             } else {
                 logger.warn("🛑 SEGURIDAD: DataSeeder ABORTADO. Se detectó sufijo de tabla vacío en entorno '{}'. Configure DYNAMODB_TABLE_SUFFIX o DATA_SEED_ENABLED=true para ejecutar.", activeProfile);
@@ -82,11 +88,6 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             }
         }
         
-        if (isProd && !explicitEnable) {
-            logger.info("🔒 DataSeeder omitido en entorno de PRODUCCIÓN (DATA_SEED_ENABLED=false).");
-            return;
-        }
-
         // Run in a separate thread to avoid blocking the main thread if possible, 
         // although ApplicationReadyEvent is already late enough.
         // We run directly but with try-catch to ensure app stays alive.
