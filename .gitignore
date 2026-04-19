@@ -23,6 +23,7 @@
 **/src/app/config/admin.config.ts
 
 # Java / Spring Boot / Backend
+**/application-local.properties
 **/target/
 **/*.class
 **/.mvn/
@@ -52,3 +53,7 @@ $RECYCLE.BIN/
 *.pdf
 *.doc
 *.docx
+
+# ENVIRONMENT VARIABLES
+*.env
+**/.env

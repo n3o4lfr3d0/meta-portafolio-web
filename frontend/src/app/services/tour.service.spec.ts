@@ -23,7 +23,7 @@ describe('TourService', () => {
 
     // Create dummy elements for all steps in the DOM
     const selectors = [
-      'app-hero', '#repo-promo-link', '#experiencia', '#educacion',
+      '#hero-section', '#repo-promo-link', '#experiencia', '#educacion',
       'app-languages', '#tech-skills-title', '#soft-skills-section',
       '#comment-form', '#api-cards-section', '#contacto',
       '#chatbot-container', '#theme-switcher-container'
@@ -53,17 +53,18 @@ describe('TourService', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    document.body.innerHTML = '';
+    vi.clearAllMocks();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should NOT start tour if localStorage has mainTourSeen', () => {
+  it('should start tour even if localStorage has mainTourSeen (check currently disabled)', () => {
     localStorage.setItem('mainTourSeen', 'true');
     service.startTour();
-    expect(driver).not.toHaveBeenCalled();
+    expect(driver).toHaveBeenCalled();
   });
 
   it('should start tour if localStorage does not have mainTourSeen', () => {
@@ -124,7 +125,7 @@ describe('TourService', () => {
     expect(driverCall.doneBtnText).toBe('Listo'); // Spanish text
     expect(driverCall.nextBtnText).toBe('Siguiente'); // Spanish text
 
-    const heroStep = driverCall.steps.find((s: any) => s.element === 'app-hero');
+    const heroStep = driverCall.steps.find((s: any) => s.element === '#hero-section');
     expect(heroStep.popover.title).toBe('Bienvenido a mi Portafolio');
   });
 

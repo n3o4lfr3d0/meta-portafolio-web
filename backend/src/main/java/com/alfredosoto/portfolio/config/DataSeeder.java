@@ -103,22 +103,37 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             seedProfile(profileRepo, "es");
             seedProfile(profileRepo, "en");
 
-            // 2. Poblar Experiencia (Upsert - Idempotente)
+            // 2. Poblar Experiencia (Limpieza + Reinserción para evitar duplicados)
             logger.info("Actualizando tabla Experience...");
-            // experienceRepo.deleteAll(); // REMOVED to prevent OOM on large tables
+            experienceRepo.deleteAll();
             
             // 2.1 Sintad
+            // 2.0 Indra Group
+            saveExperience(experienceRepo,
+                "Fullstack Software Developer",
+                "Indra Group",
+                "Abr 2026 - Presente",
+                "Desarrollo de software a la medida por proyectos acorde a las necesidades del cliente en una consultora tecnológica de alcance global. Actualmente asignado a proyectos del sector asegurador aplicando Java, Spring Boot y Angular en entornos ágiles.",
+                "https://www.indracompany.com", "es");
+
+            saveExperience(experienceRepo,
+                "Fullstack Software Developer",
+                "Indra Group",
+                "Apr 2026 - Present",
+                "Custom software development for client projects at a global technology consulting firm. Currently assigned to insurance sector projects applying Java, Spring Boot, and Angular in agile environments.",
+                "https://www.indracompany.com", "en");
+
             saveExperience(experienceRepo, 
                 "Fullstack Developer", 
                 "Sintad", 
-                "Sep 2023 - Presente", 
+                "Sep 2023 - Abr 2026", 
                 "Me encargo de desarrollar funcionalidades transversales a todos los módulos del software de comercio exterior Sumax. Cada módulo comprende una etapa del ciclo de vida de la importación y exportación de existencias. Mi misión es utilizar las mejores prácticas de programación funcional usando Java para implementar API Rest que se puedan consumir desde mi frontend desarrollado con Angular mediante formularios dinámicos.",
                 "https://www.sintad.com.pe", "es");
             
             saveExperience(experienceRepo, 
                 "Fullstack Developer", 
                 "Sintad", 
-                "Sep 2023 - Present", 
+                "Sep 2023 - Apr 2026", 
                 "Responsible for developing cross-cutting functionalities for all modules of the Sumax foreign trade software. Each module covers a stage of the import/export lifecycle. My mission is to use best practices in functional programming with Java to implement REST APIs consumed by my Angular frontend using dynamic forms.",
                 "https://www.sintad.com.pe", "en");
 
@@ -152,11 +167,25 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
                 "In charge of providing direct support to Rústica chain stores for the correct use and operation of their software. Reporting errors to the development area. Achievements: Increased efficiency and 15% workload reduction through optimization of service times.",
                 "#", "en");
 
-            // 2.5 Poblar Educación (Upsert - Idempotente)
+            // 2.5 Poblar Educación (Limpieza + Reinserción para evitar duplicados)
             logger.info("Actualizando tabla Education...");
-            // educationRepo.deleteAll(); // REMOVED
+            educationRepo.deleteAll();
             
             // Cibertec
+            saveEducation(educationRepo,
+                "Ingeniería de Sistemas Computacionales",
+                "Universidad Privada del Norte",
+                "Mar 2026 - Presente",
+                "Carrera universitaria orientada al diseño, desarrollo y gestión de sistemas de software complejos, profundizando en arquitectura de software, estructuras de datos y desarrollo de soluciones tecnológicas escalables.",
+                "https://www.upn.edu.pe", "es");
+
+            saveEducation(educationRepo,
+                "Computer Systems Engineering",
+                "Universidad Privada del Norte",
+                "Mar 2026 - Present",
+                "University degree focused on the design, development, and management of complex software systems, deepening knowledge in software architecture, data structures, and scalable technology solutions.",
+                "https://www.upn.edu.pe", "en");
+
             saveEducation(educationRepo,
                 "Computación e Informática",
                 "Instituto Superior Tecnológico Cibertec",

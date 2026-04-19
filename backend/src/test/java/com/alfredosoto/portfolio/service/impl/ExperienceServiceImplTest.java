@@ -58,6 +58,43 @@ class ExperienceServiceImplTest {
     }
 
     @Test
+    void shouldSortCorrectlyWithMonthYearPeriodFormat() {
+        // Covers real data format: "Sep 2023 - Abr 2026" and "Abr 2026 - Presente"
+        ExperienceEntity current = new ExperienceEntity();
+        current.setTitle("Fullstack Software Developer");
+        current.setCompany("Indra Group");
+        current.setPeriod("Abr 2026 - Presente");
+        current.setDescription("Consultora tecnológica");
+        current.setLink("https://www.indracompany.com");
+
+        ExperienceEntity previous = new ExperienceEntity();
+        previous.setTitle("Fullstack Developer");
+        previous.setCompany("Sintad");
+        previous.setPeriod("Sep 2023 - Abr 2026");
+        previous.setDescription("Software de comercio exterior");
+        previous.setLink("https://www.sintad.com.pe");
+
+        ExperienceEntity older = new ExperienceEntity();
+        older.setTitle("Quality Manager");
+        older.setCompany("Global S1");
+        older.setPeriod("Jun 2023 - Jul 2023");
+        older.setDescription("QA");
+        older.setLink("#");
+
+        when(experienceRepository.findAll("es")).thenReturn(Arrays.asList(previous, older, current));
+
+        List<ExperienceDTO> result = experienceService.getExperience();
+
+        assertEquals(3, result.size());
+        // "Abr 2026 - Presente" -> "9999-99" sorts first
+        assertEquals("Indra Group", result.get(0).company());
+        // "Sep 2023 - Abr 2026" -> "2023-09" sorts second (Sep > Jun)
+        assertEquals("Sintad", result.get(1).company());
+        // "Jun 2023 - Jul 2023" -> "2023-06" sorts third
+        assertEquals("Global S1", result.get(2).company());
+    }
+
+    @Test
     void shouldReturnEmptyListWhenNoExperienceFound() {
         // Arrange
         when(experienceRepository.findAll("es")).thenReturn(Collections.emptyList());
