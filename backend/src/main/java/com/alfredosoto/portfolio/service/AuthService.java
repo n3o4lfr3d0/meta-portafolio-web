@@ -65,18 +65,13 @@ public class AuthService {
     }
 
     public void createAdminUserIfNotFound() {
-        // Sync admin user from properties/env vars
-        // This ensures that if the environment variables change, the DB is updated on restart
-        UserEntity user = userRepository.findByUsername(defaultAdminUsername)
-                .orElseGet(() -> {
-                    UserEntity newUser = new UserEntity();
-                    newUser.setUsername(defaultAdminUsername);
-                    newUser.setRole("ADMIN");
-                    return newUser;
-                });
-        
-        // Always update the password hash to match the current configuration
+        if (userRepository.findByUsername(defaultAdminUsername).isPresent()) {
+            return;
+        }
+        UserEntity user = new UserEntity();
+        user.setUsername(defaultAdminUsername);
         user.setPasswordHash(hashPassword(defaultAdminPassword));
+        user.setRole("ADMIN");
         userRepository.save(user);
     }
 
