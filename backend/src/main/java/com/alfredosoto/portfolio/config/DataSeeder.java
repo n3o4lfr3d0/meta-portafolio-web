@@ -41,6 +41,9 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
     @org.springframework.beans.factory.annotation.Value("${app.dataseed.enabled:true}")
     private boolean dataSeedEnabled;
 
+    @org.springframework.beans.factory.annotation.Value("${app.dataseed.clean-tables:false}")
+    private boolean cleanTablesBeforeSeed;
+
     private final ProfileRepository profileRepo;
     private final ExperienceRepository experienceRepo;
     private final SkillRepository skillRepo;
@@ -200,9 +203,12 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
                 "Professional technical training specialized in software development and information systems.",
                 "https://www.cibertec.edu.pe", "en");
 
-            // 3. Poblar Habilidades
+            // 3. Poblar Habilidades (Upsert - Idempotente)
             logger.info("Actualizando tabla Skills...");
-            skillRepo.deleteAll();
+            if (cleanTablesBeforeSeed) {
+                logger.warn("⚠️ LIMPIANDO tabla Skill antes de reinsertarla (app.dataseed.clean-tables=true)");
+                skillRepo.deleteAll();
+            }
             
             // Backend
             saveSkill(skillRepo, "Java", BACKEND_SKILL, 95, "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", "es");
@@ -298,7 +304,10 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
             
             // 4. Poblar Idiomas
             logger.info("Actualizando tabla Language...");
-            languageRepo.deleteAll();
+            if (cleanTablesBeforeSeed) {
+                logger.warn("⚠️ LIMPIANDO tabla Language antes de reinsertarla (app.dataseed.clean-tables=true)");
+                languageRepo.deleteAll();
+            }
 
             // ES Content
             saveLanguage(languageRepo, "Español", "Nativo", "es", 100, "es");
